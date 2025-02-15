@@ -8,6 +8,9 @@ db.sqlite3
 media/
 staticfiles/
 
+Migrations/
+migrations/
+
 # Migrations (optional: ignore auto-generated migrations during development)
 # !test/migrations/__init__.py  # Uncomment if you want to keep the __init__.py file
 migrations/*.py  # Ignore all migration files in the test app

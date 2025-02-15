@@ -3,6 +3,11 @@ from authentication.models import User
 from rest_framework import serializers
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 from django.contrib.auth.password_validation import validate_password
+from rest_framework.permissions import IsAuthenticated
+from django.contrib.auth import authenticate, user_logged_in
+
+from django.contrib.auth.backends import BaseBackend
+from django.contrib.auth import authenticate
 from django.db.models import Q
 
 
@@ -22,12 +27,10 @@ class MyTokenObtainPairSerializer(TokenObtainPairSerializer):
         return token
 
     def validate(self, attrs):
-        print('validate')
-        print(attrs)
-        username = attrs['username']
+        email_or_phone = attrs['email']
         try:
             user = User.objects.get(
-                Q(email=username) | Q(phone_number=username)
+                Q(email=email_or_phone) | Q(phone_number=email_or_phone)
             )
             password = attrs['password']
             pwd_valid = user.check_password(password)
@@ -37,6 +40,12 @@ class MyTokenObtainPairSerializer(TokenObtainPairSerializer):
             raise serializers.ValidationError("Invaid Username or Password")
         except User.DoesNotExist:
             raise serializers.ValidationError("User doesnot exists")
+
+        
+        # Add extra responses here
+        # data['user'] = userdata
+        # data['groups'] = self.user.groups.values_list('name', flat=True)
+        
 
     def checkActiveUser(self, user):
         userdata = {}
@@ -64,8 +73,7 @@ class UserManagerSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
         fields = ('id', 'username', 'email',
-                  'is_superuser', 'first_name', 'last_name', 'password', 'user_type', 'phone_number',
-                  'is_active')
+                  'is_superuser', 'first_name', 'last_name', 'password', 'user_type', 'phone_number')
         read_only_fields = ('id',)
 
 
@@ -118,9 +126,3 @@ class ChangePasswordSerializer(serializers.Serializer):
 
 
 
-
-class UserProfileSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = User
-        fields = ('id', 'username', 'email',
-                 'first_name', 'last_name', 'user_type', 'phone_number')
