@@ -42,6 +42,8 @@ urlpatterns = static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)+[
     path(r'api/token/', view=userviews.MyTokenObtainPairView.as_view(),
          name='token_obtain_pair'),
     path(r'api/token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
+
+    path('api/', include('rssparser.urls')),
     re_path(r'^.*$', TemplateView.as_view(template_name='index.html')),
     
     

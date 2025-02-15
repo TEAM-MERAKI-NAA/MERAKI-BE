@@ -20,7 +20,7 @@ ALLOWED_HOSTS = ['*']
 # Application definition
 
 INSTALLED_APPS = [
-    'simpleui',
+    # 'simpleui',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.postgres',
@@ -31,6 +31,7 @@ INSTALLED_APPS = [
     'rest_framework',
     'django_filters',
     'authentication',
+    'rssparser',
 ]
 
 MIDDLEWARE = [
@@ -179,7 +180,7 @@ SIMPLEUI_ICON = {
 }
 
 
-USE_TZ = False  # Set to False to disable timezone support
+USE_TZ = True  # Set to False to disable timezone support
 TIME_ZONE = 'America/Toronto'  # Set the timezone to Toronto
 
 GOOGLE_RECAPTCHA_SECRET_KEY = '6LcolH4bAAAAADbOVnrUdtisPflLAcAoPy6YUqhR'
