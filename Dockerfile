@@ -13,7 +13,6 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 # Upgrade pip
 RUN pip install --upgrade pip
 
-COPY lxml-4.9.4-cp39-cp39-manylinux_2_17_x86_64.manylinux2014_x86_64.whl .
 RUN pip install lxml-4.9.4-cp39-cp39-manylinux_2_17_x86_64.manylinux2014_x86_64.whl
 
 COPY requirements.txt .
