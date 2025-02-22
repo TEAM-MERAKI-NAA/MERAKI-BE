@@ -2,11 +2,12 @@ FROM python:3.9-slim
 
 WORKDIR /app
 
-# Install system dependencies required for lxml and other packages
+# Install system dependencies required for lxml, psycopg2, and other packages
 RUN apt-get update && apt-get install -y \
     python3-pip \
     libxml2-dev \
     libxslt1-dev \
+    libpq-dev \
     && rm -rf /var/lib/apt/lists/*
 
 # Upgrade pip and install Python dependencies
