@@ -3,7 +3,7 @@ FROM python:3.9-slim
 WORKDIR /app
 
 # Install system dependencies required for lxml and other packages
-RUN apt-get update && apt install python3-pip
+RUN apt-get update && apt install python3-pip -y
 
 # Upgrade pip
 RUN pip install --upgrade pip
