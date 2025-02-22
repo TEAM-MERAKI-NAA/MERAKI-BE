@@ -36,7 +36,7 @@ INSTALLED_APPS = [
     'authentication',
     'news.apps.NewsConfig',
     'guide.apps.GuideConfig',
-    'point.apps.PointConfig',
+    # 'point.apps.PointConfig',
 
 ]
 

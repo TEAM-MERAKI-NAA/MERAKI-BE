@@ -1,0 +1,24 @@
+name: Deploy Backend
+
+on:
+  push:
+    branches:
+      - test1
+
+jobs:
+  build-and-push-backend:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Login to Azure Container Registry
+        run: |
+          az login --service-principal -u ${{ secrets.AZURE_CLIENT_ID }} -p ${{ secrets.AZURE_CLIENT_SECRET }} --tenant ${{ secrets.AZURE_TENANT_ID }}
+          az acr login --name ${{ secrets.ACR_NAME }}
+
+      - name: Build and Push Backend Image
+        run: |
+          docker build -t ${{ secrets.ACR_NAME }}.azurecr.io/backend:latest .
+          docker push ${{ secrets.ACR_NAME }}.azurecr.io/backend:latest
