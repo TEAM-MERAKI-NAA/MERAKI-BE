@@ -11,6 +11,7 @@ class AllocatedPoint(models.Model):
         ('active','active'),
         ('inactive','inactive')
         ]
+        
     title=models.CharField(max_length=20, choices=CHOICES, unique=True)
     allocated_point = models.IntegerField(default=15)
     status = models.CharField(max_length=20, choices=OPTIONS, default='active')
@@ -33,9 +34,6 @@ class Point(models.Model):
     points_earned= models.IntegerField(default=15)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
-    # created_at = models.DateTimeField(null=True, blank=True)
-
-    
 
     def __str__(self):
         return str(self.title)
