@@ -21,6 +21,8 @@ ALLOWED_HOSTS = ['*']
 
 INSTALLED_APPS = [
     'unfold',
+    'drf_spectacular',
+    'drf_spectacular_sidecar',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.postgres',
@@ -57,6 +59,8 @@ REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': [
         'rest_framework_simplejwt.authentication.JWTAuthentication',
     ],
+    'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema',
+
 }
 SIMPLE_JWT = {
     'ACCESS_TOKEN_LIFETIME': datetime.timedelta(days=10),
@@ -120,18 +124,18 @@ WSGI_APPLICATION = 'config.wsgi.application'
 # https://docs.djangoproject.com/en/3.2/ref/settings/#databases
 
 DATABASES = {
-    # 'default': {
-    #     'ENGINE': 'django.db.backends.postgresql',
-    #     'NAME': 'immigrationhub',
-    #     'USER': 'immigrationhub',
-    #     'PASSWORD': 'ImmigrationHub1.',
-    #     'HOST': '127.0.0.1',
-    #     'PORT': '5432',
-    # }
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': 'immigrationhub',
+        'USER': 'immigrationhub',
+        'PASSWORD': 'ImmigrationHub1.',
+        'HOST': '127.0.0.1',
+        'PORT': '5432',
     }
+    # 'default': {
+    #     'ENGINE': 'django.db.backends.sqlite3',
+    #     'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+    # }
 }
 
 
@@ -192,8 +196,8 @@ EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 
 # EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 EMAIL_HOST = 'smtp.zoho.com'
-EMAIL_HOST_USER = 'noreply@smartwakil.com'
-EMAIL_HOST_PASSWORD = 'Sm4rtW4k1l@'
+EMAIL_HOST_USER = 'noreply@immigrationhub.com'
+EMAIL_HOST_PASSWORD = 'IHub@123'
 EMAIL_PORT = '587'
 EMAIL_USE_TLS = True
 
@@ -295,4 +299,23 @@ CKEDITOR_5_CONFIGS = {
             ]
         }
     }
+}
+
+SPECTACULAR_SETTINGS = {
+    'TITLE': 'ImmigrationHub API Explorer',
+    'DESCRIPTION': 'API documentation for ImmigrationHub services.',
+    'VERSION': '1.0.0',
+    'SERVE_INCLUDE_SCHEMA': False,
+    'SWAGGER_UI_SETTINGS': {
+        'deepLinking': True,
+        'displayOperationId': True,
+        'defaultModelsExpandDepth': 2,
+        'defaultModelExpandDepth': 2,
+        'docExpansion': 'list',
+        'persistAuthorization': True,
+        'filter': True,
+        'showExtensions': True,
+        'showCommonExtensions': True,
+    },
+    'COMPONENT_SPLIT_REQUEST': True,
 }
