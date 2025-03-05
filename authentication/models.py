@@ -1,14 +1,8 @@
 from django.contrib.auth.models import AbstractUser, BaseUserManager
 from django.db import models
-from django.utils.translation import gettext_lazy as _
+from django.utils.translation import ugettext_lazy as _
 from django.contrib.auth.models import PermissionsMixin
 from django.db import transaction
-from django.dispatch import receiver
-from django.urls import reverse
-from django.conf import settings
-from django_rest_passwordreset.signals import reset_password_token_created
-from django.core.mail import send_mail
-
 
 class UserManager(BaseUserManager):
     """Define a model manager for User model with no username field."""
@@ -20,11 +14,24 @@ class UserManager(BaseUserManager):
             raise ValueError('The given email must be set')
         if not extra_fields.get('username'):
             raise ValueError('Users must have a valid username.')
-        if not extra_fields.get('phone_number'):
-            raise ValueError('Users must have a valid phone number.')
+        # email = ''
+        phone_number = ''
+        data = {}
+        username = email
+        if '@' in username:
+            email = self.normalize_email(username)
+            data['email'] = email
+            data['username'] = username
+        else:
+            phone_number = username
+            data['phone_number'] = username
+            data['username'] = username
         email = self.normalize_email(email)
-        user = self.model(email=email, **extra_fields)
+        user = self.model(**data)
         user.set_password(password)
+        user.is_superuser = True
+        user.is_active = True
+        user.is_staff = True
         user.save(using=self._db)
         return user
 
@@ -47,41 +54,47 @@ class UserManager(BaseUserManager):
         return self._create_user(email, password, **extra_fields)
 
 
-# model utils - pypi
 class User(AbstractUser):
     USER_TYPES = (
         (1, "General User"),
-        (2, "Admin"),
+        (1, "Admin"),
     )
-    username = models.CharField(max_length=50, unique=False, blank=True, null=True)
-    email = models.EmailField(_('Email Address'), unique=True, blank=False, error_messages={'unique':"Email has already been registered."})
+    username = models.CharField(max_length=50, unique=True)
+    email = models.EmailField(_('Email Address'), blank=True, null=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
-    phone_number = models.CharField(max_length=30,  unique=True, error_messages={'unique':"Phone Number has already been registered."})
+    phone_number = models.CharField(max_length=30,  unique=False, blank=True, null=True)
     user_type = models.IntegerField(choices=USER_TYPES, null=True, default=1)
-    otp = models.IntegerField(null=True, blank=True)
-    activation_key = models.CharField(max_length=150,blank=True,null=True)
-    REQUIRED_FIELDS = ['username', 'phone_number', 'user_type']
     objects = UserManager()
 
-    USERNAME_FIELD = 'email'
+    USERNAME_FIELD = 'username'
+
+    class Meta:
+        verbose_name = _('user')
+        verbose_name_plural = _('users')
 
 
     def __unicode__(self):
         return self.username
 
-@receiver(reset_password_token_created)
-def password_reset_token_created(sender, instance, reset_password_token, *args, **kwargs):
+    @property
+    def user_name(self):
+        return self.email
 
-    data = reset_password_token.key
+    # @transaction.atomic
+    # def save(self, request):
+    #     user = super().save(request)
+    #     user.phone_number = self.data.get('phone_number')
+    #     user.save()
+    #     return user
 
-    send_mail(
-        # title:
-        "Password Reset for {title}".format(title="ImmigrationHub"),
-        # message:
-        "Kindly use this token to reset your password:     " + data,
-        # from:
-        settings.EMAIL_HOST_USER,
-        # to:
-        [reset_password_token.user.email],
-    )
+
+class UserOtp(models.Model):
+    username = models.CharField(max_length=100, unique=True)
+    otp = models.IntegerField(null=True, blank=True)
+    activation_key = models.CharField(max_length=150, blank=True, null=True)
+    count = models.IntegerField(default=0, help_text='Number of OTP sent')
+    validated = models.BooleanField(default=False)
+
+    def __str__(self):
+        return str(self.username)

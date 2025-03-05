@@ -27,10 +27,12 @@ class MyTokenObtainPairSerializer(TokenObtainPairSerializer):
         return token
 
     def validate(self, attrs):
-        email_or_phone = attrs['email']
+        print('validate')
+        print(attrs)
+        username = attrs['username']
         try:
             user = User.objects.get(
-                Q(email=email_or_phone) | Q(phone_number=email_or_phone)
+                Q(email=username) | Q(phone_number=username)
             )
             password = attrs['password']
             pwd_valid = user.check_password(password)
@@ -73,7 +75,8 @@ class UserManagerSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
         fields = ('id', 'username', 'email',
-                  'is_superuser', 'first_name', 'last_name', 'password', 'user_type', 'phone_number')
+                  'is_superuser', 'first_name', 'last_name', 'password', 'user_type', 'phone_number',
+                  'is_active')
         read_only_fields = ('id',)
 
 
@@ -126,3 +129,9 @@ class ChangePasswordSerializer(serializers.Serializer):
 
 
 
+
+class UserProfileSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields = ('id', 'username', 'email',
+                 'first_name', 'last_name', 'user_type', 'phone_number')
