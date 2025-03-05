@@ -142,59 +142,57 @@ class UserCreateViewSet(APIView):
             errors['password'] = list(e.messages)
         if errors:
             return Response(errors, status=status.HTTP_400_BAD_REQUEST)
+        # captcha = request.data['captcha']
+        # request.data.pop('captcha')
+        # captcharesult = self.checkcaptcha(captcha)
+        # if captcharesult:
+        serialized = UserSignupSerializer(data=request.data)
         
-        
-        captcha = request.data['captcha']
-        request.data.pop('captcha')
-        captcharesult = self.checkcaptcha(captcha)
-        if captcharesult:
-            serialized = UserSignupSerializer(data=request.data)
+        if serialized.is_valid():
+            key = generateKey.returnValue()
+            user = User.objects.create(
+                username=request.data['username'],
+                email=request.data['email'],
+                phone_number=request.data['phone_number'],
+                is_staff=False,
+                is_superuser=False,
+                is_active=False,
+                user_type=request.data['user_type'],
+                otp=key['OTP'],
+                activation_key=key['totp']
+            )
+            user.set_password(request.data['password'])
+            user.save()
+            email = request.data['email']
+            emailtext = """<p>Your One Time Password (OTP ) is <span
+                        style="font-weight: bolder; font-size: larger; background-color: rgb(230, 233, 236); padding: 4px;">{}</span>
+                </p>
+                <br>
+                <p>This otp is valid for 1 day only.</p>
+                <em>Thank you</em><br />
+                <em>Team <b>ImmigrationHub</b></em>""".format(key['OTP'],)
+
+            send_email = send_mail(
+                # title:
+                "One Time Password.",
+                # message:
+                emailtext,
+                # from:
+                settings.EMAIL_HOST_USER,
+                # to:
+                [email],
+                html_message=emailtext
+            )
             
-            if serialized.is_valid():
-                key = generateKey.returnValue()
-                user = User.objects.create(
-                    username=request.data['username'],
-                    email=request.data['email'],
-                    phone_number=request.data['phone_number'],
-                    is_staff=False,
-                    is_superuser=False,
-                    is_active=False,
-                    user_type=request.data['user_type'],
-                    otp=key['OTP'],
-                    activation_key=key['totp']
-                )
-                user.set_password(request.data['password'])
-                user.save()
-                email = request.data['email']
-                emailtext = """<p>Your One Time Password (OTP ) is <span
-                            style="font-weight: bolder; font-size: larger; background-color: rgb(230, 233, 236); padding: 4px;">{}</span>
-                    </p>
-                    <br>
-                    <p>This otp is valid for 1 day only.</p>
-                    <em>Thank you</em><br />
-                    <em>Team <b>Smart Wakil</b></em>""".format(key['OTP'],)
+            subscribe(email)
 
-                send_email = send_mail(
-                    # title:
-                    "One Time Password.",
-                    # message:
-                    emailtext,
-                    # from:
-                    settings.EMAIL_HOST_USER,
-                    # to:
-                    [email],
-                    html_message=emailtext
-                )
-                
-                subscribe(email)
-
-                result = {
-                    'data': serialized.data,
-                    'status': True
-                }
-                return Response(result, status=status.HTTP_200_OK)
-            return Response(serialized.errors, status=status.HTTP_400_BAD_REQUEST)
-        return Response('ReCaptcha error', status=status.HTTP_400_BAD_REQUEST)
+            result = {
+                'data': serialized.data,
+                'status': True
+            }
+            return Response(result, status=status.HTTP_200_OK)
+        return Response(serialized.errors, status=status.HTTP_400_BAD_REQUEST)
+        # return Response('ReCaptcha error', status=status.HTTP_400_BAD_REQUEST)
 
     def generateOTP(self):
         digits = "0123456789"
@@ -258,7 +256,7 @@ class ValidateOTP(APIView):
                     </p>
                     <br>
                     <em>Thank you</em><br />
-                    <em>Team <b>Smart Wakil</b></em>""".format(user.username,)
+                    <em>Team <b>ImmigrationHub</b></em>""".format(user.username,)
 
                     send_email = send_mail(
                         # title:
@@ -358,7 +356,7 @@ class ResendOTP(APIView):
                     <br>
                     <p>This otp is valid for 1 day only.</p>
                     <em>Thank you</em><br />
-                    <em>Team <b>Smart Wakil</b></em>""".format(otp,)
+                    <em>Team <b>ImmigrationHub</b></em>""".format(otp,)
                 send_email = send_mail(
                     # title:
                     "One Time Password.",

@@ -10,7 +10,6 @@ from django_rest_passwordreset.signals import reset_password_token_created
 from django.core.mail import send_mail
 
 
-
 class UserManager(BaseUserManager):
     """Define a model manager for User model with no username field."""
     use_in_migrations = True
@@ -48,12 +47,11 @@ class UserManager(BaseUserManager):
         return self._create_user(email, password, **extra_fields)
 
 
+# model utils - pypi
 class User(AbstractUser):
     USER_TYPES = (
         (1, "General User"),
-        (2, "Student Wakil"),
-        (3, "Wakil"),
-        (4, "Admin"),
+        (2, "Admin"),
     )
     username = models.CharField(max_length=50, unique=False, blank=True, null=True)
     email = models.EmailField(_('Email Address'), unique=True, blank=False, error_messages={'unique':"Email has already been registered."})
@@ -72,14 +70,6 @@ class User(AbstractUser):
     def __unicode__(self):
         return self.username
 
-    # @transaction.atomic
-    # def save(self, request):
-    #     user = super().save(request)
-    #     user.phone_number = self.data.get('phone_number')
-    #     user.save()
-    #     return user
-
-
 @receiver(reset_password_token_created)
 def password_reset_token_created(sender, instance, reset_password_token, *args, **kwargs):
 
@@ -87,7 +77,7 @@ def password_reset_token_created(sender, instance, reset_password_token, *args, 
 
     send_mail(
         # title:
-        "Password Reset for {title}".format(title="Smart Wakil"),
+        "Password Reset for {title}".format(title="ImmigrationHub"),
         # message:
         "Kindly use this token to reset your password:     " + data,
         # from:
