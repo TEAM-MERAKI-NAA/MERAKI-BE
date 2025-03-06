@@ -44,6 +44,7 @@ urlpatterns = static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)+[
     path(r'api/token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
 
     path('api/', include('rssparser.urls')),
+    path('api/', include('currencyrates.urls')),
     re_path(r'^.*$', TemplateView.as_view(template_name='index.html')),
     
     
