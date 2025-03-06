@@ -11,7 +11,7 @@ from .serializers import NewsItemSerializer
 def fetch_news(request):
     try:
         # Try to fetch and update from the RSS feed
-        feed_url = "https://api.io.canada.ca/io-server/gc/news/en/v2?dept=departmentofcitizenshipandimmigration&sort=publishedDate&orderBy=desc&publishedDate%3E=2021-07-23&pick=50&format=atom&atomtitle=Immigration,%20Refugees%20and%20Citizenship%20Canada"
+        feed_url = " https://api.io.canada.ca/io-server/gc/news/en/v2?dept=departmentofcitizenshipandimmigration&sort=publishedDate&orderBy=desc&format=atom"
         news_items = fetch_and_parse_atom(feed_url)
         
         if news_items is not None:
@@ -144,7 +144,7 @@ def get_news_items(request):
         'source': item.source,
     } for item in news_items]
     
-    response_message = "Fetched from database. Data might not be updated. Please run the fetch-from-api endpoint to update the data if the RSS API is working."
+    response_message = "Data fetched may be outdated. Update using fetch-store endpoint if RSS API works; otherwise, stored data will be shown."
     if news_items.exists() and news_items.first().updated.date() == datetime.date.today():
         response_message = "Data is up-to-date."
 
@@ -179,3 +179,4 @@ def speeches(request):
     news_items = NewsItem.objects.filter(category__icontains='speeches').order_by('-updated')
     serializer = NewsItemSerializer(news_items, many=True)
     return Response(serializer.data)
+
