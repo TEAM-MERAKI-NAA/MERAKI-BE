@@ -39,6 +39,8 @@ INSTALLED_APPS = [
     'news.apps.NewsConfig',
     'guide.apps.GuideConfig',
     'point.apps.PointConfig',
+    'rssparser',
+    'currencyrates'
 
 ]
 
