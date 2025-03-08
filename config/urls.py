@@ -24,6 +24,9 @@ urlpatterns = static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)+[
     re_path(r'news/', include('news.urls')),
     re_path(r'point/', include('point.urls')),
     re_path(r'guide/', include('guide.urls')),
+    re_path(r'currencyrates/', include('currencyrates.urls')),
+    re_path(r'profile/', include('my_profile.urls')),
+    re_path(r'rssparser/', include('rssparser.urls')),
     re_path('api/password_reset/',
          include('django_rest_passwordreset.urls', namespace='password_reset')),
 
