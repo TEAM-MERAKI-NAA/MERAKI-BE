@@ -1,7 +1,8 @@
 from django.contrib.auth.models import AbstractUser, BaseUserManager
 from django.db import models
-from django.utils.translation import gettext_lazy as _
-
+from django.utils.translation import ugettext_lazy as _
+from django.contrib.auth.models import PermissionsMixin
+from django.db import transaction
 
 class UserManager(BaseUserManager):
     """Define a model manager for User model with no username field."""
@@ -79,6 +80,13 @@ class User(AbstractUser):
     @property
     def user_name(self):
         return self.email
+
+    # @transaction.atomic
+    # def save(self, request):
+    #     user = super().save(request)
+    #     user.phone_number = self.data.get('phone_number')
+    #     user.save()
+    #     return user
 
 
 class UserOtp(models.Model):

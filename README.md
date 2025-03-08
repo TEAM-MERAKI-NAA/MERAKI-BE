@@ -1,5 +1,4 @@
 Immigration Hub
-
 # Installation
 
 Install libraries in python virtual environment and Install all libraries from requirements.txt

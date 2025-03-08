@@ -1,27 +1,42 @@
 from rest_framework.response import Response
+from rest_framework import viewsets
 from authentication.models import User
 from rest_framework.permissions import IsAuthenticated
+from .serializers import UserManagerSerializer, UserSignupSerializer
 from .serializers import ChangePasswordSerializer
 from .serializers import MyTokenObtainPairSerializer
 from rest_framework_simplejwt.views import TokenObtainPairView
 from rest_framework.permissions import AllowAny
-from rest_framework.decorators import permission_classes
+from rest_framework.decorators import authentication_classes, permission_classes
 from rest_framework.views import APIView
+from rest_framework import generics
 from rest_framework import status
+import math
 import random
 from rest_framework.permissions import AllowAny
 from rest_framework.decorators import permission_classes
 from django.core.mail import send_mail
 from django.db import transaction
+import django.contrib.auth.password_validation as validators
+from django.core import exceptions
 import pyotp
+from django.core.mail.message import EmailMultiAlternatives
 from django.db.models import Q
 from .models import UserOtp
 from django.contrib.auth.models import BaseUserManager
+from fcm_django.models import FCMDevice
 import requests
 from rest_framework.response import Response
 
 #for recaptcha
+import urllib
+import json
 from django.conf import settings
+from django.shortcuts import render, redirect
+from django.contrib import messages
+
+from django.conf import settings
+
 
 class UpdatePassword(APIView):
     """
@@ -142,7 +157,7 @@ class UserCreateViewSet(APIView):
                     <br>
                     <p>This otp is valid for 1 day only.</p>
                     <em>Thank you</em><br />
-                    <em>Team <b>Immigration Hub</b></em>""".format(key['OTP'],)
+                    <em>Team <b>Finnove</b></em>""".format(key['OTP'],)
 
         send_email = send_mail(
             # title:
@@ -177,6 +192,7 @@ class UserOtpRegistration(APIView):
                 data['username'] = username
                 email = False
         else:
+            # errors['username'] = 'Empty username'
             errors['status'] = False
             errors['detail'] = 'Username shouldnot be empty'
             return Response(errors, status=status.HTTP_200_OK)
@@ -241,7 +257,7 @@ class UserOtpRegistration(APIView):
                     <br>
                     <p>This otp is valid for 1 day only.</p>
                     <em>Thank you</em><br />
-                    <em>Team <b>Immigration Hub</b></em>""".format(data['otp'],)
+                    <em>Team <b>Finnove</b></em>""".format(data['otp'],)
 
         send_email = send_mail(
             # title:
@@ -292,8 +308,12 @@ class ValidateOTP(APIView):
         old = UserOtp.objects.filter(username__iexact=username)
         if old.exists():
             old = old.first()
+            # count = old.count
             _otp = old.otp
             if int(otp) != int(_otp):
+                # count = count + 1
+                # old.count = count 
+                # old.save()
                 return Response({
                     "status": False, 
                     "detail": "Invalid otp"
@@ -328,7 +348,7 @@ class ValidateOTP(APIView):
                     </p>
                     <br>
                     <em>Thank you</em><br />
-                    <em>Team <b>Immigration Hub</b></em>""".format(user.username,)
+                    <em>Team <b>Finnove</b></em>""".format(user.username,)
 
         send_email = send_mail(
             "One Time Password.",
@@ -392,8 +412,16 @@ class UserRegisterAfterOtp(APIView):
                     )
                     user.set_password(password)
                     user.save()
+
+                    # uncomment this and check with registration if profile is created or not
+                    # myprofile = MyProfile.objects.create(
+                    #     user = user
+                    # )
+                    # myprofile.save()
+
                     old.delete()
                     self.sendEmail(user)
+                    device = FCMDevice()
                     return Response({
                         'status': True,
                         'detail': 'Successfully registered'
@@ -421,7 +449,7 @@ class UserRegisterAfterOtp(APIView):
                     </p>
                     <br>
                     <em>Thank you</em><br />
-                    <em>Team <b>Immigration Hub</b></em>""".format(user.username,)
+                    <em>Team <b>Finnove</b></em>""".format(user.username,)
 
         send_email = send_mail(
             "Registration.",
@@ -505,6 +533,8 @@ class VerifyUserIfLoggedIn(APIView):
                     'is_active': currentuser.is_active,
                     'name': currentuser.username
                 }
+        # serializer = UserManagerSerializer(currentuser)
+        # serializerdata = serializer.data
         return Response(resp)
 
 

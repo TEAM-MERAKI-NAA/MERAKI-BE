@@ -3,6 +3,11 @@ from authentication.models import User
 from rest_framework import serializers
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 from django.contrib.auth.password_validation import validate_password
+from rest_framework.permissions import IsAuthenticated
+from django.contrib.auth import authenticate, user_logged_in
+
+from django.contrib.auth.backends import BaseBackend
+from django.contrib.auth import authenticate
 from django.db.models import Q
 
 
@@ -37,6 +42,12 @@ class MyTokenObtainPairSerializer(TokenObtainPairSerializer):
             raise serializers.ValidationError("Invaid Username or Password")
         except User.DoesNotExist:
             raise serializers.ValidationError("User doesnot exists")
+
+        
+        # Add extra responses here
+        # data['user'] = userdata
+        # data['groups'] = self.user.groups.values_list('name', flat=True)
+        
 
     def checkActiveUser(self, user):
         userdata = {}

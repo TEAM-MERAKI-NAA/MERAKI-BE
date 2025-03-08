@@ -8,10 +8,13 @@ db.sqlite3
 media/
 staticfiles/
 
+Migrations/
+migrations/
+
 # Migrations (optional: ignore auto-generated migrations during development)
 # !test/migrations/__init__.py  # Uncomment if you want to keep the __init__.py file
-test/migrations/*.py  # Ignore all migration files in the test app
-!test/migrations/__init__.py  # Keep the __init__.py file
+migrations/*.py  # Ignore all migration files in the test app
+migrations/__init__.py  # Keep the __init__.py file
 
 # Django Rest Framework (DRF) - Optional
 docs/_build/
