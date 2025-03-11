@@ -13,6 +13,8 @@ class MyProfile(models.Model):
     image=models.ImageField(upload_to='profile/', null=True, blank=True)
     first_name = models.CharField(max_length=150, blank=True, null=True)
     last_name = models.CharField(max_length=150, blank=True, null=True)
+    status_in_canad = models.CharField(max_length=20, blank=True, null=True)
+    describe_you = models.TextField(max_length=500, blank=True, null=True)
 
     def get_absolute_url(self):
         return reverse('myprofile-details', kwargs={'pk': self.pk})
