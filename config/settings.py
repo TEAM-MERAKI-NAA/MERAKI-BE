@@ -130,8 +130,8 @@ DATABASES = {
         'ENGINE': 'django.db.backends.postgresql',
         'NAME': 'immigrationhub',
         'USER': 'immigrationhub',
-        'PASSWORD': 'ImmigrationHub1.',
-        'HOST': '127.0.0.1',
+        'PASSWORD': 'PzjWnjbV7PiWl4e1ktV7ZNWR5VZveQc9',
+        'HOST': 'dpg-cv64882n91rc73bb9pkg-a.oregon-postgres.render.com',
         'PORT': '5432',
     }
     # 'default': {

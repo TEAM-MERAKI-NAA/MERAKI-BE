@@ -45,7 +45,10 @@ urlpatterns = static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)+[
     #authentication urls
     re_path(r'api/token/', view=userviews.MyTokenObtainPairView.as_view(),
          name='token_obtain_pair'),
-    re_path(r'api/token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),   
+    re_path(r'api/token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
+
+    re_path('api/', include('rssparser.urls')),
+    re_path('api/', include('currencyrates.urls')),
 
     # Full-fledged API Explorer
     re_path(r'api/schema/', SpectacularAPIView.as_view(), name='schema'),
