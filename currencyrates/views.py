@@ -10,7 +10,7 @@ def fetch_exchange_rates(request):
         headers = {
             "appian-version": "web/2022-05-03.0",
             "x-device-id": "web",
-            "x-device-model": ""
+            "x-device-model": "web"
         }
 
         # Make the API request
@@ -33,8 +33,8 @@ def fetch_cad_exchange_rates(request):
         url = "https://api.taptapsend.com/api/fxRates"
         headers = {
             "appian-version": "web/2022-05-03.0",
-            "x-device-id": "",
-            "x-device-model": ""
+            "x-device-id": "web",
+            "x-device-model": "web"
         }
 
         response = requests.get(url, headers=headers)
@@ -58,7 +58,7 @@ def fetch_cad_to_currency(request, currency_code):
         headers = {
             "appian-version": "web/2022-05-03.0",
             "x-device-id": "web",
-            "x-device-model": ""
+            "x-device-model": "web"
         }
 
         response = requests.get(url, headers=headers)

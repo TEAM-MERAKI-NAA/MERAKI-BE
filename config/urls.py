@@ -16,7 +16,7 @@ from drf_spectacular.views import SpectacularAPIView, SpectacularSwaggerView, Sp
 
 admin.site.site_header = 'ImmigrationHub'
 admin.site.site_title = 'ImmigrationHub'
-urlpatterns = static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)+[
+urlpatterns = [
 
     re_path(r'^admin/', admin.site.urls),
     re_path(r'^admin', admin.site.urls),
@@ -50,11 +50,14 @@ urlpatterns = static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)+[
          name='token_obtain_pair'),
     re_path(r'api/token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),   
 
+    re_path('api/', include('rssparser.urls')),
+    re_path('api/', include('currencyrates.urls')),
     # Full-fledged API Explorer
     re_path(r'api/schema/', SpectacularAPIView.as_view(), name='schema'),
     re_path(r'api/explorer', SpectacularSwaggerView.as_view(url_name='schema'), name='swagger-ui'),
     re_path(r'api/redoc/', SpectacularRedocView.as_view(url_name='schema'), name='redoc'),
     
     
-] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
-urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+]
+if settings.DEBUG:
+   urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)

@@ -13,7 +13,7 @@ AUTH_USER_MODEL = 'authentication.User'
 SECRET_KEY = 'django-insecure-sc_x*go9lhleh9hm&_nwqf4d$2kfqtz(6v663qw==!vq%9v8m#'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
 ALLOWED_HOSTS = ['*']
 
@@ -126,34 +126,34 @@ WSGI_APPLICATION = 'config.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/3.2/ref/settings/#databases
 
-# DATABASES = {
-#     'default': {
-#         'ENGINE': 'django.db.backends.postgresql',
-#         'NAME': 'immigrationhub',
-#         'USER': 'immigrationhub',
-#         'PASSWORD': 'ImmigrationHub1.',
-#         'HOST': '127.0.0.1',
-#         'PORT': '5432',
-#     }
-#     # 'default': {
-#     #     'ENGINE': 'django.db.backends.sqlite3',
-#     #     'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
-#     # }
-# }
-
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'immigrationhub',
-        'USER': 'immigrationhub',
-        'PASSWORD': 'PzjWnjbV7PiWl4e1ktV7ZNWR5VZveQc9',
-        'HOST': 'dpg-cv64882n91rc73bb9pkg-a.oregon-postgres.render.com',  # Corrected hostname
-        'PORT': '5432',
-        'OPTIONS': {
-            'sslmode': 'require',  # Ensures SSL connection is used
-        },
-    }
+     'default': {
+         'ENGINE': 'django.db.backends.postgresql',
+         'NAME': 'immigrationhub',
+         'USER': 'ubuntu',
+         'PASSWORD': 'Seneca@clo900',
+         'HOST': '127.0.0.1',
+         'PORT': '5432',
+     }
+#     'default': {
+#         'ENGINE': 'django.db.backends.sqlite3',
+#         'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+#     }
 }
+
+#DATABASES = {
+#    'default': {
+#        'ENGINE': 'django.db.backends.postgresql',
+#        'NAME': 'immigrationhub',
+#        'USER': 'immigrationhub',
+#        'PASSWORD': 'PzjWnjbV7PiWl4e1ktV7ZNWR5VZveQc9',
+#        'HOST': 'dpg-cv64882n91rc73bb9pkg-a.oregon-postgres.render.com',  # Corrected hostname
+#        'PORT': '5432',
+#        'OPTIONS': {
+#            'sslmode': 'require',  # Ensures SSL connection is used
+#        },
+#    }
+#}
 
 
 
@@ -190,10 +190,16 @@ USE_L10N = True
 
 USE_TZ = True
 
-# STATIC_ROOT = os.path.join(BASE_DIR, 'static')
+#STATIC_ROOT = os.path.join(BASE_DIR, 'static')
+#STATIC_URL = '/static/'
+#STATICFILES_DIRS = [os.path.join(BASE_DIR, 'static')]
 STATIC_URL = '/static/'
-STATICFILES_DIRS = [os.path.join(BASE_DIR, 'static')]
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 
+# Also make sure you have STATICFILES_DIRS if you store static files in non-app directories
+STATICFILES_DIRS = [
+    os.path.join(BASE_DIR, 'static'),
+]
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media').replace('\\', '/')
 MEDIA_URL = '/media/'
 
@@ -220,9 +226,9 @@ EMAIL_PORT = '587'
 EMAIL_USE_TLS = True
 
 
-BASE_DIRR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-PROJECT_ROOT = os.path.abspath(os.path.dirname(__file__))
-PROJECT_APP = os.path.basename(BASE_DIRR)
+#BASE_DIRR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+#PROJECT_ROOT = os.path.abspath(os.path.dirname(__file__))
+#PROJECT_APP = os.path.basename(BASE_DIRR)
 
 
 # MAILCHIMP CREDENTIALS

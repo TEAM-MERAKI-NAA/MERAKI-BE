@@ -7,34 +7,48 @@ from .models import NewsItem
 import datetime
 from .serializers import NewsItemSerializer
 
+from rest_framework.decorators import api_view
+from rest_framework.response import Response
+from .models import NewsItem
+from .serializers import NewsItemSerializer
+import requests
+import feedparser
+from bleach import clean
+import datetime
+
 @api_view(['GET'])
 def fetch_news(request):
     try:
-        # Try to fetch and update from the RSS feed
-        feed_url = " https://api.io.canada.ca/io-server/gc/news/en/v2?dept=departmentofcitizenshipandimmigration&sort=publishedDate&orderBy=desc&format=atom"
+        feed_url = "https://api.io.canada.ca/io-server/gc/news/en/v2?dept=departmentofcitizenshipandimmigration&sort=publishedDate&orderBy=desc&format=atom"
         news_items = fetch_and_parse_atom(feed_url)
         
-        if news_items is not None:
+        if news_items:
+#            print("News items fetched from RSS feed:")
             for news_item in news_items:
+                print(news_item)
+                title = news_item['title'][:200]  # Truncate title to 200 characters
+                link = news_item['link'][:200]  # Truncate link to 200 characters
+                summary = news_item['summary'][:200]  # Truncate summary to 200 characters
+                category = news_item['category'][:200]  # Truncate category to 200 characters
+                source = news_item['source'][:100]  # Truncate source to 100 characters
                 NewsItem.objects.update_or_create(
-                    title=news_item['title'],
-                    link=news_item['link'],
+                    title=title,
+                    link=link,
                     defaults={
-                        'summary': news_item['summary'],
+                        'summary': summary,
                         'updated': news_item['updated'],
-                        'category': news_item['category'],
-                        'source': news_item['source']
+                        'category': category,
+                        'source': source
                     }
                 )
             response_source = "Fetched from RSS API, stored in DB"
         else:
-            # If fetching from RSS feed fails, fall back to database
+            print("No news items fetched, falling back to database")
             news_items = NewsItem.objects.all().order_by('-updated')
             response_source = "API is down, fetched from database. Data might not be updated."
 
     except Exception as e:
         print(f"Error: {e}")
-        # If there's an exception, fall back to database
         news_items = NewsItem.objects.all().order_by('-updated')
         response_source = "API is down, fetched from database. Data might not be updated."
 
@@ -48,11 +62,7 @@ def fetch_and_parse_atom(feed_url):
         print(f"Fetched data: {response.content}")
 
         feed = feedparser.parse(response.content)
-        news_items = []
-
-        for entry in feed.entries:
-            news_item = parse_entry(entry)
-            news_items.append(news_item)
+        news_items = [parse_entry(entry) for entry in feed.entries]
 
         print(f"Parsed news items: {news_items}")
         return news_items
@@ -99,25 +109,14 @@ def parse_date(date_str):
     return None
 
 def parse_categories(categories):
-    parsed_categories = []
     if isinstance(categories, list):
-        for category in categories:
-            term = extract_term(category)
-            if term:
-                parsed_categories.append(term)
-    else:
-        term = extract_term(categories)
-        if term:
-            parsed_categories.append(term)
-    return parsed_categories
+        return [extract_term(category) for category in categories if extract_term(category)]
+    return [extract_term(categories)] if extract_term(categories) else []
 
 def extract_term(category):
     if hasattr(category, 'term'):
-        term = category.term
-        return decode_if_bytes(term)
-    elif isinstance(category, str) or isinstance(category, bytes):
-        return decode_if_bytes(category)
-    return None
+        return decode_if_bytes(category.term)
+    return decode_if_bytes(category) if isinstance(category, (str, bytes)) else None
 
 def decode_if_bytes(value):
     if isinstance(value, bytes):
@@ -143,7 +142,7 @@ def get_news_items(request):
         'category': item.category,
         'source': item.source,
     } for item in news_items]
-    
+
     response_message = "Data fetched may be outdated. Update using fetch-store endpoint if RSS API works; otherwise, stored data will be shown."
     if news_items.exists() and news_items.first().updated.date() == datetime.date.today():
         response_message = "Data is up-to-date."
@@ -179,4 +178,3 @@ def speeches(request):
     news_items = NewsItem.objects.filter(category__icontains='speeches').order_by('-updated')
     serializer = NewsItemSerializer(news_items, many=True)
     return Response(serializer.data)
-
