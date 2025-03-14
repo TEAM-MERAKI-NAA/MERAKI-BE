@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" href="../static/favicon.ico" />
+    <title>Immigration Hub - Coming Soon</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #f4f4f4;
+            color: #333;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            flex-direction: column;
+        }
+        .logo {
+            width: 150px;
+            height: auto;
+            margin-bottom: 20px;
+        }
+        h1 {
+            font-size: 2.5rem;
+            margin: 0;
+            color: #d32f2f;
+        }
+        p {
+            font-size: 1.2rem;
+            margin: 10px 0 20px;
+        }
+        .countdown {
+            font-size: 1.5rem;
+            font-weight: bold;
+        }
+        .footer {
+            position: absolute;
+            bottom: 10px;
+            font-size: 0.9rem;
+            color: #000000;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <img src="../static/logo.png" alt="Immigration Hub Logo" class="logo">
+    <h1>Coming Soon</h1>
+    <p>We are working hard to bring you the best immigration resources and accessibility web application for International students.</p>
+    <div class="countdown" id="countdown"></div>
+    <div class="footer">© 2025 Immigration Hub. All rights reserved.<br/>Developed by <b>Team MERAKI.</b></div>
+
+    <script>
+        // Countdown Timer
+        const countdown = () => {
+            const countDate = new Date('March 31, 2025 00:00:00').getTime();
+            const now = new Date().getTime();
+            const gap = countDate - now;
+
+            const second = 1000;
+            const minute = second * 60;
+            const hour = minute * 60;
+            const day = hour * 24;
+
+            const textDay = Math.floor(gap / day);
+            const textHour = Math.floor((gap % day) / hour);
+            const textMinute = Math.floor((gap % hour) / minute);
+            const textSecond = Math.floor((gap % minute) / second);
+
+            document.getElementById('countdown').innerText = `${textDay}d ${textHour}h ${textMinute}m ${textSecond}s`;
+
+            if (gap < 0) {
+                clearInterval(countdown);
+                document.getElementById('countdown').innerText = "We're Live!";
+            }
+        };
+
+        setInterval(countdown, 1000);
+    </script>
+</body>
+</html>
