@@ -73,7 +73,7 @@ REST_FRAMEWORK = {
     'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema',
 }
 
-ROOT_URLCONF = 'immigrationhub.urls'
+ROOT_URLCONF = 'config.urls'
 
 TEMPLATES = [
     {
@@ -91,7 +91,7 @@ TEMPLATES = [
     },
 ]
 
-WSGI_APPLICATION = 'immigrationhub.wsgi.application'
+WSGI_APPLICATION = 'config.wsgi.application'
 
 
 # Database
