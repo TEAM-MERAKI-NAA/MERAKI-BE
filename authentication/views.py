@@ -3,7 +3,7 @@ from rest_framework import status, viewsets
 from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
 from rest_framework_simplejwt.tokens import RefreshToken
-from .serializers import RegisterSerializer, LoginSerializer, JWTSerializer, ProfileSerializer
+from .serializers import RegisterSerializer, LoginSerializer, JWTSerializer, ProfileSerializer, VerifyEmailSerializer
 from rest_framework.response import Response
 from django.contrib.auth import get_user_model
 from rest_framework import status
@@ -19,6 +19,7 @@ from rest_framework.exceptions import ValidationError
 import random
 from django.core.cache import cache  
 from django.conf import settings
+from rest_framework.generics import GenericAPIView
 
 
 class RegisterView(viewsets.ViewSet):
@@ -142,3 +143,15 @@ class ProfileViewSet(viewsets.ModelViewSet):
         Automatically link the profile to the authenticated user when creating it.
         """
         serializer.save(user=self.request.user)
+
+class VerifyEmailView(GenericAPIView):
+    permission_classes = [AllowAny]
+    serializer_class = VerifyEmailSerializer
+
+    def post(self, request):
+        serializer = self.get_serializer(data=request.data)
+        if serializer.is_valid():
+            return Response({
+                'message': 'Email verified successfully. You can now login.'
+            }, status=status.HTTP_200_OK)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
