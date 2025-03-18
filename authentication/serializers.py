@@ -35,12 +35,27 @@ class RegisterSerializer(serializers.ModelSerializer):
         return attrs
 
     def create(self, validated_data):
-        user = User.objects.create(
-            email=validated_data['email'],
-            phone_number=validated_data.get('phone_number', '')
-        )
-        user.set_password(validated_data['password'])
+        # Create user but don't save yet
+        user = User(**validated_data)
+        user.is_active = False  # User won't be able to login until verified
+        user.is_verified = False
         user.save()
+        
+        # Generate OTP
+        otp = str(random.randint(100000, 999999))
+        
+        # Save OTP in cache with 10 minutes timeout
+        cache.set(f"registration_otp_{user.email}", otp, timeout=600)
+        
+        # Send OTP via email
+        send_mail(
+            subject='Verify your email with OTP',
+            message=f'Your OTP for email verification is: {otp}. It will expire in 10 minutes.',
+            from_email=settings.EMAIL_HOST_USER,
+            recipient_list=[user.email],
+            fail_silently=False,
+        )
+        
         return user
 
 class VerifyEmailSerializer(serializers.Serializer):
