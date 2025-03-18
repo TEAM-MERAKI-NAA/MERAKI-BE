@@ -68,10 +68,12 @@ class VerifyEmailSerializer(serializers.Serializer):
         
         try:
             user = User.objects.get(email=email)
+            print(f"Found user: {user.email}, is_verified: {user.is_verified}, is_active: {user.is_active}")
         except User.DoesNotExist:
             raise serializers.ValidationError("User not found")
             
         cached_otp = cache.get(f"registration_otp_{email}")
+        print(f"Cached OTP: {cached_otp}, Received OTP: {otp}")
         
         if not cached_otp:
             raise serializers.ValidationError("OTP has expired")
@@ -83,6 +85,7 @@ class VerifyEmailSerializer(serializers.Serializer):
         user.is_active = True
         user.is_verified = True
         user.save()
+        print(f"After verification - is_verified: {user.is_verified}, is_active: {user.is_active}")
         
         # Delete the OTP from cache
         cache.delete(f"registration_otp_{email}")
@@ -99,14 +102,23 @@ class LoginSerializer(serializers.Serializer):
         
         try:
             user = User.objects.get(email=email)
+            print(f"Login attempt for user: {user.email}")
+            print(f"User status - is_verified: {user.is_verified}, is_active: {user.is_active}")
+            
             if not user.check_password(password):
+                print("Password check failed")
                 raise serializers.ValidationError("Invalid credentials")
             if not user.is_verified:
+                print("Email not verified")
                 raise serializers.ValidationError("Please verify your email before logging in")
             if not user.is_active:
+                print("Account inactive")
                 raise serializers.ValidationError("Your account is inactive")
+                
+            print("Login successful")
             return {"user": user}
         except User.DoesNotExist:
+            print(f"User not found with email: {email}")
             raise serializers.ValidationError("Invalid credentials")
 
 class JWTSerializer(serializers.Serializer):
