@@ -7,6 +7,7 @@ from django.core.mail import send_mail
 from django.conf import settings
 from django.core.cache import cache
 import random
+from django.contrib.auth.password_validation import validate_password
 
 User = get_user_model()
 
@@ -16,34 +17,30 @@ class UserSerializer(serializers.ModelSerializer):
         fields = ('id', 'email', 'phone_number', 'is_verified')
 
 class RegisterSerializer(serializers.ModelSerializer):
-    password = serializers.CharField(write_only=True)
+    password = serializers.CharField(write_only=True, required=True, validators=[validate_password])
+    password2 = serializers.CharField(write_only=True, required=True)
 
     class Meta:
         model = User
-        fields = ('email', 'phone_number', 'password', 'is_verified')
+        fields = ('email', 'phone_number', 'password', 'password2', 'is_verified')
+        extra_kwargs = {
+            'email': {'required': True},
+            'phone_number': {'required': False},
+            'is_verified': {'read_only': True}
+        }
+
+    def validate(self, attrs):
+        if attrs['password'] != attrs.pop('password2'):
+            raise serializers.ValidationError({"password": "Password fields didn't match."})
+        return attrs
 
     def create(self, validated_data):
-        # Create user but don't save yet
-        user = User(**validated_data)
-        user.is_active = False  # User won't be able to login until verified
-        user.is_verified = False
-        user.save()
-        
-        # Generate OTP
-        otp = str(random.randint(100000, 999999))
-        
-        # Save OTP in cache with 10 minutes timeout
-        cache.set(f"registration_otp_{user.email}", otp, timeout=600)
-        
-        # Send OTP via email
-        send_mail(
-            subject='Verify your email with OTP',
-            message=f'Your OTP for email verification is: {otp}. It will expire in 10 minutes.',
-            from_email=settings.EMAIL_HOST_USER,
-            recipient_list=[user.email],
-            fail_silently=False,
+        user = User.objects.create(
+            email=validated_data['email'],
+            phone_number=validated_data.get('phone_number', '')
         )
-        
+        user.set_password(validated_data['password'])
+        user.save()
         return user
 
 class VerifyEmailSerializer(serializers.Serializer):
