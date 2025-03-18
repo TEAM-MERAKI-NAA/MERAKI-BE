@@ -4,9 +4,12 @@ from django.db import models
 
 class CustomUser(AbstractUser):
     username = models.CharField(unique=True, max_length=15, blank=True, null=True)
-    phone_number = models.CharField(max_length=15, blank=True, null=True)
     email = models.EmailField(unique=True, blank=False, null=False)
+    phone_number = models.CharField(max_length=15, blank=True, null=True)
     is_verified = models.BooleanField(default=False)
+
+    USERNAME_FIELD = 'email' 
+    REQUIRED_FIELDS = [] 
 
     def __str__(self):
         return self.email
@@ -22,4 +25,4 @@ class Profile(models.Model):
     last_name = models.CharField(max_length=15, blank=True, null=True)
 
     def __str__(self):
-        return f"Profile of {self.user.username}"
+        return f"Profile of {self.user.email}"

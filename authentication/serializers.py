@@ -13,14 +13,14 @@ User = get_user_model()
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
-        fields = ('id', 'username', 'email', 'phone_number', 'is_verified')
+        fields = ('id', 'email', 'phone_number', 'is_verified')
 
 class RegisterSerializer(serializers.ModelSerializer):
     password = serializers.CharField(write_only=True)
 
     class Meta:
         model = User
-        fields = ('username', 'email', 'phone_number', 'password', 'is_verified')
+        fields = ('email', 'phone_number', 'password', 'is_verified')
 
     def create(self, validated_data):
         # Create user but don't save yet
@@ -115,3 +115,16 @@ class ProfileSerializer(serializers.ModelSerializer):
         instance.last_name = validated_data.get('last_name', instance.last_name)
         instance.save()
         return instance
+
+class ResendOTPSerializer(serializers.Serializer):
+    email = serializers.EmailField()
+
+    def validate(self, data):
+        email = data.get('email')
+        try:
+            user = User.objects.get(email=email)
+            if user.is_verified:
+                raise serializers.ValidationError("Email is already verified")
+        except User.DoesNotExist:
+            raise serializers.ValidationError("User not found")
+        return data
