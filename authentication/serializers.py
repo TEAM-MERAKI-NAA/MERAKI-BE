@@ -96,12 +96,18 @@ class LoginSerializer(serializers.Serializer):
     def validate(self, data):
         email = data.get("email")
         password = data.get("password")
-        user = authenticate(email=email, password=password)
-        if user is None:
+        
+        try:
+            user = User.objects.get(email=email)
+            if not user.check_password(password):
+                raise serializers.ValidationError("Invalid credentials")
+            if not user.is_verified:
+                raise serializers.ValidationError("Please verify your email before logging in")
+            if not user.is_active:
+                raise serializers.ValidationError("Your account is inactive")
+            return {"user": user}
+        except User.DoesNotExist:
             raise serializers.ValidationError("Invalid credentials")
-        if not user.is_verified:
-            raise serializers.ValidationError("Please verify your email before logging in")
-        return {"user": user}
 
 class JWTSerializer(serializers.Serializer):
     refresh = serializers.CharField()
