@@ -78,13 +78,13 @@ class VerifyEmailSerializer(serializers.Serializer):
         return data
 
 class LoginSerializer(serializers.Serializer):
-    username = serializers.CharField()
+    email = serializers.EmailField()
     password = serializers.CharField(write_only=True)
 
     def validate(self, data):
-        username = data.get("username")
+        email = data.get("email")
         password = data.get("password")
-        user = authenticate(username=username, password=password)
+        user = authenticate(email=email, password=password)
         if user is None:
             raise serializers.ValidationError("Invalid credentials")
         if not user.is_verified:
