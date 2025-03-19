@@ -119,14 +119,6 @@ class ResetPasswordView(viewsets.ViewSet):
 
         return Response({"message": "Password reset successfully."}, status=status.HTTP_200_OK)
 
-
-class IsProfileOwner(BasePermission):
-    """
-    Custom permission to only allow users to edit their own profile.
-    """
-    def has_object_permission(self, request, view, obj):
-        return obj.user == request.user
-
 class VerifyEmailView(GenericAPIView):
     permission_classes = [AllowAny]
     serializer_class = VerifyEmailSerializer

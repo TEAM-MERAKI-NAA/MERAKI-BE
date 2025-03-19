@@ -25,7 +25,7 @@ from drf_spectacular.views import SpectacularAPIView, SpectacularSwaggerView, Sp
 admin.site.site_header = 'ImmigrationHub'
 admin.site.site_title = 'ImmigrationHub'
 
-urlpatterns = [
+urlpatterns = static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT) + [
     path('admin/', admin.site.urls),
     path('auth/', include('authentication.urls')),
     path('news/', include('news.urls')),
@@ -39,9 +39,5 @@ urlpatterns = [
     re_path(r'api/schema/', SpectacularAPIView.as_view(), name='schema'),
     re_path(r'api/explorer', SpectacularSwaggerView.as_view(url_name='schema'), name='swagger-ui'),
     re_path(r'api/redoc/', SpectacularRedocView.as_view(url_name='schema'), name='redoc'),
-]
 
-if settings.DEBUG == False | settings.DEBUG == True:
-    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
-    urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
-
+] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
