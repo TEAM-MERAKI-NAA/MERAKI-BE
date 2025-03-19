@@ -180,3 +180,33 @@ def speeches(request):
     serializer = NewsItemSerializer(news_items, many=True)
     return Response(serializer.data)
 
+
+@api_view(['GET'])
+def news_releases(request):
+    news_items = NewsItem.objects.filter(category__icontains='news releases').order_by('-updated')
+    serializer = NewsItemSerializer(news_items, many=True)
+    return Response(serializer.data)
+
+@api_view(['GET'])
+def backgrounders(request):
+    news_items = NewsItem.objects.filter(category__icontains='backgrounders').order_by('-updated')
+    serializer = NewsItemSerializer(news_items, many=True)
+    return Response(serializer.data)
+
+@api_view(['GET'])
+def media_advisories(request):
+    news_items = NewsItem.objects.filter(category__icontains='media advisories').order_by('-updated')
+    serializer = NewsItemSerializer(news_items, many=True)
+    return Response(serializer.data)
+
+@api_view(['GET'])
+def statements(request):
+    news_items = NewsItem.objects.filter(category__icontains='statements').order_by('-updated')
+    serializer = NewsItemSerializer(news_items, many=True)
+    return Response(serializer.data)
+
+@api_view(['GET'])
+def speeches(request):
+    news_items = NewsItem.objects.filter(category__icontains='speeches').order_by('-updated')
+    serializer = NewsItemSerializer(news_items, many=True)
+    return Response(serializer.data)
