@@ -131,44 +131,45 @@ class IsProfileOwner(BasePermission):
 class ProfileViewSet(viewsets.ModelViewSet):
     """
     ViewSet for managing profiles of authenticated users.
-    Provides the ability to view and edit the profile.
     """
     serializer_class = ProfileSerializer
     permission_classes = [IsAuthenticated]
 
     def get_queryset(self):
-        """
-        Overriding to return only the authenticated user's profile.
-        """
         return Profile.objects.filter(user=self.request.user)
-    
-    def get_object(self):
-        """
-        Returns the profile of the currently authenticated user.
-        """
-        return self.request.user.profile
-    
-    def perform_create(self, serializer):
-        """
-        Automatically link the profile to the authenticated user when creating it.
-        """
-        serializer.save(user=self.request.user)
 
-    def retrieve(self, request, *args, **kwargs):
-        """
-        Get the current user's profile.
-        """
-        instance = self.get_object()
-        serializer = self.get_serializer(instance)
-        return Response(serializer.data)
+    def get_object(self):
+        try:
+            profile = Profile.objects.get(user=self.request.user)
+        except Profile.DoesNotExist:
+            # Create profile if it doesn't exist
+            profile = Profile.objects.create(user=self.request.user)
+        return profile
 
     def list(self, request, *args, **kwargs):
         """
-        List the current user's profile.
+        Get the current user's profile
         """
-        instance = self.get_object()
-        serializer = self.get_serializer(instance)
+        profile = self.get_object()
+        serializer = self.get_serializer(profile)
         return Response(serializer.data)
+
+    def create(self, request, *args, **kwargs):
+        """
+        Create or update the current user's profile
+        """
+        try:
+            profile = Profile.objects.get(user=request.user)
+            serializer = self.get_serializer(profile, data=request.data, partial=True)
+        except Profile.DoesNotExist:
+            serializer = self.get_serializer(data=request.data)
+        
+        serializer.is_valid(raise_exception=True)
+        self.perform_create(serializer)
+        return Response(serializer.data)
+
+    def perform_create(self, serializer):
+        serializer.save(user=self.request.user)
 
 class VerifyEmailView(GenericAPIView):
     permission_classes = [AllowAny]
