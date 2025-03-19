@@ -5,11 +5,6 @@ from django.utils.translation import gettext_lazy as _
 from .models import User
 
 
-<<<<<<< HEAD
-# @admin.register(User)
-=======
-# admin.register(User)
->>>>>>> e60007a (added authentication microservice)
 class UserAdmin(DjangoUserAdmin):
     """Define admin model for custom User model with no email field."""
 
@@ -17,12 +12,6 @@ class UserAdmin(DjangoUserAdmin):
         (None, {'fields': ('username', 'email', 'phone_number', 'password')}),
         (_('Personal info'), {
          'fields': ('first_name', 'last_name', 'user_type')}),
-<<<<<<< HEAD
-        # (_('Permissions'), {'fields': ('is_active', 'is_staff', 'is_superuser',
-        #                                'groups', 'user_permissions')}),
-        # (_('Important dates'), {'fields': ('last_login', 'date_joined')}),
-=======
->>>>>>> e60007a (added authentication microservice)
     )
     add_fieldsets = (
         (None, {
