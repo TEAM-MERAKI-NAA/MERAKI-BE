@@ -79,21 +79,25 @@ def fetch_cad_available_currencies(request):
             return Response({'source': "Fetched from TapTapSend API", 'currencies': currencies})
         return Response({'error': "CAD data not found"}, status=404)
     return Response({'error': "Failed to fetch data from TapTapSend API"}, status=500)
-
 @api_view(['GET'])
 def cad_conversion(request):
     """
-    Fetches exchange rate for CAD to a specific currency (with additional validation for USD).
-    Requires `currency` and `CountryCode` parameters when the currency is USD.
+    Fetches exchange rate for CAD to a specific currency.
+    For USD currency, ensures that `CountryCode` is provided.
+    Includes alerts for validating the currency code and proper usage for USD.
     """
     try:
         # Fetch the required parameters
-        currency_code = request.query_params.get('currency', None) 
-        iso_country_code = request.query_params.get('CountryCode', None)  
+        currency_code = request.query_params.get('currency', None)  # E.g., 'USD', 'PHP', etc.
+        country_code = request.query_params.get('CountryCode', None)  # E.g., 'EG', 'LB', etc.
 
         # Validate that the currency parameter is provided
         if not currency_code:
-            return Response({'error': "Currency parameter is required ?currency=PHP)"}, status=400)
+            return Response({
+                'error': "Missing parameter: 'currency' is required to fetch exchange rates.",
+                'details': "Ensure you include the 'currency' parameter in your query (e.g., ?currency=USD).",
+                'help': "Refer to 'currencyrates/exchange-rates/cad/currencies/' for valid currencies and country codes."
+            }, status=400)
 
         # Fetch data from the TapTapSend API
         data = fetch_taptapsend_data()
@@ -101,16 +105,30 @@ def cad_conversion(request):
             # Filter for CAD exchange rates
             cad_data = next((country for country in data['availableCountries'] if country['currency'] == 'CAD'), None)
             if cad_data:
-                # If currency is USD and not local, validate isoCountryCode
+                # Validate the provided currency code
+                valid_currencies = [
+                    corridor['currency'] for corridor in cad_data['corridors']
+                ]
+                if currency_code not in valid_currencies:
+                    return Response({
+                        'error': f"Invalid currency: '{currency_code}' is not supported.",
+                        'details': "The currency you provided is not listed as valid for CAD exchange rates.",
+                        'help': "Refer to 'IPaddress:8000/currencyrates/exchange-rates/cad/currencies/' for a list of valid currencies and country codes."
+                    }, status=404)
+
                 if currency_code == 'USD':
-                    if not iso_country_code:
+                    # Validate CountryCode for USD currency
+                    if not country_code:
                         return Response({
-                            'error': "Country Code parameter (isoCountryCode) is required for USD (e.g., ?isoCountryCode=LB)"
+                            'error': "Missing parameter: 'CountryCode' is required for USD currency.",
+                            'details': "Provide the 'CountryCode' parameter in your query (e.g., ?currency=USD&CountryCode=EG).",
+                            'help': "Refer to 'IPaddress:8000/currencyrates/exchange-rates/cad/currencies/' for countries that support USD."
                         }, status=400)
-                    # Filter for USD based on both currency and Country Code
+
+                    # Filter for USD equivalency based on Country Code
                     currency_data = next(
                         (corridor for corridor in cad_data['corridors']
-                         if corridor['currency'] == currency_code and corridor.get('isoCountryCode') == iso_country_code),
+                         if corridor['currency'] == currency_code and corridor.get('isoCountryCode') == country_code),
                         None
                     )
                 else:
@@ -124,22 +142,25 @@ def cad_conversion(request):
                 if currency_data:
                     return Response({'source': "Fetched from TapTapSend API", 'data': currency_data})
                 else:
-                    available_currencies = [
-                        {
-                            'currency': corridor['currency'],
-                            'CountryCode': corridor.get('isoCountryCode', '')
-                        }
-                        for corridor in cad_data['corridors']
-                    ]
                     return Response({
-                        'error': f"Data for currency '{currency_code}' with Country Code '{iso_country_code}' not found.",
-                        'available_currencies': available_currencies
+                        'error': f"Invalid combination: No data found for 'currency={currency_code}' with 'CountryCode={country_code}'.",
+                        'details': f"The provided currency '{currency_code}' and country code '{country_code}' do not match available data.",
+                        'help': "Refer to 'currencyrates/exchange-rates/cad/currencies/' for valid combinations of currencies and country codes."
                     }, status=404)
             else:
-                return Response({'error': "CAD data not found in the API response"}, status=404)
+                return Response({
+                    'error': "Data unavailable: CAD-specific data could not be retrieved from the API.",
+                    'details': "Please verify if CAD data is available or contact support for assistance."
+                }, status=404)
 
-        return Response({'error': "Failed to fetch data from TapTapSend API"}, status=500)
+        return Response({
+            'error': "Service error: Failed to fetch data from the TapTapSend API.",
+            'details': "This may be due to connectivity issues or a problem with the external API."
+        }, status=500)
 
     except requests.exceptions.RequestException as e:
         print(f"Error fetching exchange rates: {e}")
-        return Response({'error': "Failed to fetch data from TapTapSend API"}, status=500)
+        return Response({
+            'error': "Unexpected error occurred while processing your request.",
+            'details': "Please try again later or contact support if the issue persists."
+        }, status=500)
