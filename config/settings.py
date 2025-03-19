@@ -54,7 +54,6 @@ INSTALLED_APPS = [
     'corsheaders',
     'news',
     'guide',
-    'profiles',
     'rssparser',
     'currencyrates',
 ]

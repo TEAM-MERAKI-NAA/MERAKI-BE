@@ -28,7 +28,6 @@ admin.site.site_title = 'ImmigrationHub'
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('auth/', include('authentication.urls')),
-    path('profile/', include('profiles.urls')),
     path('news/', include('news.urls')),
     path('guide/', include('guide.urls')),
     path('rssparser/', include('rssparser.urls')),
