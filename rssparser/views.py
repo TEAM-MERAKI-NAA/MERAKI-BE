@@ -131,6 +131,7 @@ def decode_if_bytes(value):
             print(f"Warning: Could not decode value: {value}")
     return value
 
+
 @api_view(['GET'])
 def get_news_items(request):
     news_items = NewsItem.objects.all().order_by('-updated')
@@ -150,10 +151,25 @@ def get_news_items(request):
     return Response({'source': response_message, 'data': data})
 
 @api_view(['GET'])
+def categories(request):
+    try:
+        categories = NewsItem.objects.values_list('category', flat=True).distinct()
+        return Response({'categories': list(categories)})
+    
+    except Exception as e:
+        return Response({'error': f"An error occurred: {str(e)}"})
+
+@api_view(['GET'])
 def news_releases(request):
     news_items = NewsItem.objects.filter(category__icontains='news releases').order_by('-updated')
     serializer = NewsItemSerializer(news_items, many=True)
     return Response(serializer.data)
+
+@api_view(['GET'])
+def readouts(request):
+    news_items = NewsItem.objects.filter(category__icontains='readouts').order_by('-updated')
+    serializer = NewsItemSerializer(news_items, many=True)
+    return Response({'source': "Readouts f  etched successfully", 'data': serializer.data})
 
 @api_view(['GET'])
 def backgrounders(request):
