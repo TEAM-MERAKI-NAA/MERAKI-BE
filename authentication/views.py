@@ -29,7 +29,10 @@ class RegisterView(viewsets.ViewSet):
         serializer = RegisterSerializer(data=request.data)
         if serializer.is_valid():
             user = serializer.save()
-            return Response({'message': 'User created successfully'}, status=status.HTTP_201_CREATED)
+            return Response({
+                'message': 'Registration successful. Please check your email for OTP verification.',
+                'email': user.email
+            }, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 class LoginView(viewsets.ViewSet):

@@ -77,7 +77,6 @@ class VerifyEmailSerializer(serializers.Serializer):
             raise serializers.ValidationError("User not found")
             
         cached_otp = cache.get(f"registration_otp_{email}")
-        print(f"Cached OTP: {cached_otp}, Received OTP: {otp}")
         
         if not cached_otp:
             raise serializers.ValidationError("OTP has expired")
@@ -89,7 +88,6 @@ class VerifyEmailSerializer(serializers.Serializer):
         user.is_active = True
         user.is_verified = True
         user.save()
-        print(f"After verification - is_verified: {user.is_verified}, is_active: {user.is_active}")
         
         # Delete the OTP from cache
         cache.delete(f"registration_otp_{email}")
