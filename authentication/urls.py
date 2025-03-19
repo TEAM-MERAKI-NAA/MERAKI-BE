@@ -3,7 +3,10 @@ from rest_framework import routers
 
 from . import views
 
+<<<<<<< HEAD
 
+=======
+>>>>>>> e60007a (added authentication microservice)
 router = routers.DefaultRouter(trailing_slash=False)
 
 urlpatterns = [

@@ -1,8 +1,12 @@
 from django.contrib.auth.models import AbstractUser, BaseUserManager
 from django.db import models
 from django.utils.translation import gettext_lazy as _
+<<<<<<< HEAD
 from django.contrib.auth.models import PermissionsMixin
 from django.db import transaction
+=======
+
+>>>>>>> e60007a (added authentication microservice)
 
 class UserManager(BaseUserManager):
     """Define a model manager for User model with no username field."""
@@ -81,6 +85,7 @@ class User(AbstractUser):
     def user_name(self):
         return self.email
 
+<<<<<<< HEAD
     # @transaction.atomic
     # def save(self, request):
     #     user = super().save(request)
@@ -88,6 +93,8 @@ class User(AbstractUser):
     #     user.save()
     #     return user
 
+=======
+>>>>>>> e60007a (added authentication microservice)
 
 class UserOtp(models.Model):
     username = models.CharField(max_length=100, unique=True)
