@@ -54,6 +54,7 @@ INSTALLED_APPS = [
     'corsheaders',
     'news',
     'guide',
+    'profiles',
     'rssparser',
     'currencyrates',
 ]
@@ -100,18 +101,18 @@ WSGI_APPLICATION = 'config.wsgi.application'
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
 
 DATABASES = {
-         'default': {
-         'ENGINE': 'django.db.backends.postgresql',
-         'NAME': 'immigrationhub',
-         'USER': 'ubuntu',
-         'PASSWORD': 'Seneca@clo900',
-         'HOST': '127.0.0.1',
-         'PORT': '5432',
-     }
-#    'default': {
-#        'ENGINE': 'django.db.backends.sqlite3',
-#        'NAME': BASE_DIR / 'db.sqlite3',
-#    }
+    #      'default': {
+    #      'ENGINE': 'django.db.backends.postgresql',
+    #      'NAME': 'immigrationhub',
+    #      'USER': 'ubuntu',
+    #      'PASSWORD': 'Seneca@clo900',
+    #      'HOST': '127.0.0.1',
+    #      'PORT': '5432',
+    #  }
+   'default': {
+       'ENGINE': 'django.db.backends.sqlite3',
+       'NAME': BASE_DIR / 'db.sqlite3',
+   }
 
     # 'default': {
     #    'ENGINE': 'django.db.backends.postgresql',
@@ -161,8 +162,6 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/4.2/howto/static-files/
 
-STATIC_URL = 'static/'
-
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
 
@@ -195,8 +194,8 @@ EMAIL_HOST_PASSWORD = 'blhh wayu axjb lozr'
 PASSWORD_RESET_TIMEOUT_DAYS = 1
 
 STATIC_ROOT = os.path.join(BASE_DIR, 'static')
-STATIC_URL = '/static/'
-MEDIA_URL = '/media/'
+STATIC_URL = 'static/'
+MEDIA_URL = 'media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
 #ck editor
@@ -286,3 +285,6 @@ CKEDITOR_5_CONFIGS = {
         }
     }
 }
+
+# Email Verification
+FRONTEND_URL = 'http://localhost:3000'  # Change this to your frontend URL in production

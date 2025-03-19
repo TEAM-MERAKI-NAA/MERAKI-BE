@@ -3,11 +3,10 @@ from rest_framework import status, viewsets
 from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
 from rest_framework_simplejwt.tokens import RefreshToken
-from .serializers import RegisterSerializer, LoginSerializer, JWTSerializer, ProfileSerializer, VerifyEmailSerializer, ResendOTPSerializer
+from .serializers import RegisterSerializer, LoginSerializer, JWTSerializer, VerifyEmailSerializer, ResendOTPSerializer
 from rest_framework.response import Response
 from django.contrib.auth import get_user_model
 from rest_framework import status
-from .models import Profile
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.permissions import BasePermission
 
@@ -127,49 +126,6 @@ class IsProfileOwner(BasePermission):
     """
     def has_object_permission(self, request, view, obj):
         return obj.user == request.user
-
-class ProfileViewSet(viewsets.ModelViewSet):
-    """
-    ViewSet for managing profiles of authenticated users.
-    """
-    serializer_class = ProfileSerializer
-    permission_classes = [IsAuthenticated]
-
-    def get_queryset(self):
-        return Profile.objects.filter(user=self.request.user)
-
-    def get_object(self):
-        try:
-            profile = Profile.objects.get(user=self.request.user)
-        except Profile.DoesNotExist:
-            # Create profile if it doesn't exist
-            profile = Profile.objects.create(user=self.request.user)
-        return profile
-
-    def list(self, request, *args, **kwargs):
-        """
-        Get the current user's profile
-        """
-        profile = self.get_object()
-        serializer = self.get_serializer(profile)
-        return Response(serializer.data)
-
-    def create(self, request, *args, **kwargs):
-        """
-        Create or update the current user's profile
-        """
-        try:
-            profile = Profile.objects.get(user=request.user)
-            serializer = self.get_serializer(profile, data=request.data, partial=True)
-        except Profile.DoesNotExist:
-            serializer = self.get_serializer(data=request.data)
-        
-        serializer.is_valid(raise_exception=True)
-        self.perform_create(serializer)
-        return Response(serializer.data)
-
-    def perform_create(self, serializer):
-        serializer.save(user=self.request.user)
 
 class VerifyEmailView(GenericAPIView):
     permission_classes = [AllowAny]

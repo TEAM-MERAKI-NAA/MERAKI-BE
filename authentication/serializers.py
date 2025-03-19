@@ -2,7 +2,6 @@
 from django.contrib.auth import get_user_model
 from rest_framework import serializers
 from django.contrib.auth import authenticate
-from .models import Profile
 from django.core.mail import send_mail
 from django.conf import settings
 from django.core.cache import cache
@@ -125,28 +124,6 @@ class JWTSerializer(serializers.Serializer):
         refresh = validated_data.get('refresh')
         access = validated_data.get('access')
         return {'refresh': refresh, 'access': access}
-
-class ProfileSerializer(serializers.ModelSerializer):
-    email = serializers.EmailField(source='user.email', read_only=True)
-    phone_number = serializers.CharField(source='user.phone_number', read_only=True)
-    is_verified = serializers.BooleanField(source='user.is_verified', read_only=True)
-    
-    class Meta:
-        model = Profile
-        fields = ('id', 'email', 'phone_number', 'is_verified', 'bio', 'profile_picture', 
-                 'nationality', 'province', 'gender', 'first_name', 'last_name')
-        read_only_fields = ('id', 'email', 'phone_number', 'is_verified')
-
-    def update(self, instance, validated_data):
-        instance.bio = validated_data.get('bio', instance.bio)
-        instance.profile_picture = validated_data.get('profile_picture', instance.profile_picture)
-        instance.nationality = validated_data.get('nationality', instance.nationality)
-        instance.province = validated_data.get('province', instance.province)
-        instance.gender = validated_data.get('gender', instance.gender)
-        instance.first_name = validated_data.get('first_name', instance.first_name)
-        instance.last_name = validated_data.get('last_name', instance.last_name)
-        instance.save()
-        return instance
 
 class ResendOTPSerializer(serializers.Serializer):
     email = serializers.EmailField()
