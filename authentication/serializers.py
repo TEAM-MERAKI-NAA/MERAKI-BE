@@ -36,7 +36,11 @@ class RegisterSerializer(serializers.ModelSerializer):
 
     def create(self, validated_data):
         # Create user but don't save yet
-        user = User(**validated_data)
+        user = User(
+            email=validated_data['email'],
+            phone_number=validated_data.get('phone_number', '')
+        )
+        user.set_password(validated_data['password'])
         user.is_active = False  # User won't be able to login until verified
         user.is_verified = False
         user.save()
