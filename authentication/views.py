@@ -133,9 +133,8 @@ class ProfileViewSet(viewsets.ModelViewSet):
     ViewSet for managing profiles of authenticated users.
     Provides the ability to view and edit the profile.
     """
-    queryset = Profile.objects.all()
     serializer_class = ProfileSerializer
-    permission_classes = [IsAuthenticated, IsProfileOwner]
+    permission_classes = [IsAuthenticated]
 
     def get_queryset(self):
         """
@@ -143,11 +142,25 @@ class ProfileViewSet(viewsets.ModelViewSet):
         """
         return Profile.objects.filter(user=self.request.user)
     
+    def get_object(self):
+        """
+        Returns the profile of the currently authenticated user.
+        """
+        return self.request.user.profile
+    
     def perform_create(self, serializer):
         """
         Automatically link the profile to the authenticated user when creating it.
         """
         serializer.save(user=self.request.user)
+
+    def retrieve(self, request, *args, **kwargs):
+        """
+        Get the current user's profile.
+        """
+        instance = self.get_object()
+        serializer = self.get_serializer(instance)
+        return Response(serializer.data)
 
 class VerifyEmailView(GenericAPIView):
     permission_classes = [AllowAny]

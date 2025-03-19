@@ -127,9 +127,12 @@ class JWTSerializer(serializers.Serializer):
         return {'refresh': refresh, 'access': access}
 
 class ProfileSerializer(serializers.ModelSerializer):
+    user = serializers.HiddenField(default=serializers.CurrentUserDefault())
+    
     class Meta:
         model = Profile
-        fields = ('bio', 'profile_picture', 'nationality', 'province', 'gender', 'first_name', 'last_name')
+        fields = ('id', 'user', 'bio', 'profile_picture', 'nationality', 'province', 'gender', 'first_name', 'last_name')
+        read_only_fields = ('id', 'user')
 
     def update(self, instance, validated_data):
         instance.bio = validated_data.get('bio', instance.bio)
