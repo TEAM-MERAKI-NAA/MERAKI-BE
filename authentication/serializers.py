@@ -106,23 +106,17 @@ class LoginSerializer(serializers.Serializer):
         
         try:
             user = User.objects.get(email=email)
-            print(f"Login attempt for user: {user.email}")
-            print(f"User status - is_verified: {user.is_verified}, is_active: {user.is_active}")
-            
-            if not user.check_password(password):
-                print("Password check failed")
-                raise serializers.ValidationError("Invalid credentials")
             if not user.is_verified:
-                print("Email not verified")
                 raise serializers.ValidationError("Please verify your email before logging in")
             if not user.is_active:
-                print("Account inactive")
                 raise serializers.ValidationError("Your account is inactive")
                 
-            print("Login successful")
+            user = authenticate(username=email, password=password)
+            if user is None:
+                raise serializers.ValidationError("Invalid credentials")
+                
             return {"user": user}
         except User.DoesNotExist:
-            print(f"User not found with email: {email}")
             raise serializers.ValidationError("Invalid credentials")
 
 class JWTSerializer(serializers.Serializer):
