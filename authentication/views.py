@@ -134,7 +134,7 @@ class ProfileViewSet(viewsets.ModelViewSet):
     Provides the ability to view and edit the profile.
     """
     serializer_class = ProfileSerializer
-    permission_classes = [IsAuthenticated]
+    permission_classes = [IsAuthenticated, IsProfileOwner]
 
     def get_queryset(self):
         """
