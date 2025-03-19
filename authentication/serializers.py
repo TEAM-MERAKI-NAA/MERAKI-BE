@@ -128,11 +128,12 @@ class JWTSerializer(serializers.Serializer):
 
 class ProfileSerializer(serializers.ModelSerializer):
     user = serializers.HiddenField(default=serializers.CurrentUserDefault())
+    email = serializers.EmailField(source='user.email', read_only=True)
     
     class Meta:
         model = Profile
-        fields = ('id', 'user', 'bio', 'profile_picture', 'nationality', 'province', 'gender', 'first_name', 'last_name')
-        read_only_fields = ('id', 'user')
+        fields = ('id', 'user', 'email', 'bio', 'profile_picture', 'nationality', 'province', 'gender', 'first_name', 'last_name')
+        read_only_fields = ('id', 'user', 'email')
 
     def update(self, instance, validated_data):
         instance.bio = validated_data.get('bio', instance.bio)

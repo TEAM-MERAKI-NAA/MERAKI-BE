@@ -134,7 +134,7 @@ class ProfileViewSet(viewsets.ModelViewSet):
     Provides the ability to view and edit the profile.
     """
     serializer_class = ProfileSerializer
-    permission_classes = [IsAuthenticated, IsProfileOwner]
+    permission_classes = [IsAuthenticated]
 
     def get_queryset(self):
         """
@@ -157,6 +157,14 @@ class ProfileViewSet(viewsets.ModelViewSet):
     def retrieve(self, request, *args, **kwargs):
         """
         Get the current user's profile.
+        """
+        instance = self.get_object()
+        serializer = self.get_serializer(instance)
+        return Response(serializer.data)
+
+    def list(self, request, *args, **kwargs):
+        """
+        List the current user's profile.
         """
         instance = self.get_object()
         serializer = self.get_serializer(instance)
