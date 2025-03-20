@@ -1,6 +1,7 @@
 from django.db import models
 from django.contrib.auth import get_user_model
 from django.core.validators import MinValueValidator
+from django.utils import timezone
 from datetime import datetime
 
 User = get_user_model()
@@ -34,7 +35,7 @@ class Reminder(models.Model):
         if not self.last_reminder_sent:
             return True
 
-        now = datetime.now()
+        now = timezone.now()
         last_sent = self.last_reminder_sent
 
         if self.frequency == 'daily':

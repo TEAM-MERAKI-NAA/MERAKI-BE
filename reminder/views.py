@@ -4,6 +4,7 @@ from rest_framework.decorators import action
 from rest_framework.response import Response
 from django.core.mail import send_mail
 from django.conf import settings
+from django.utils import timezone
 from .models import Reminder
 from .serializers import ReminderSerializer
 from datetime import datetime
@@ -38,7 +39,7 @@ class ReminderViewSet(viewsets.ModelViewSet):
                     [reminder.user.email],
                     fail_silently=False,
                 )
-                reminder.last_reminder_sent = datetime.now()
+                reminder.last_reminder_sent = timezone.now()
                 reminder.save()
                 return Response({'status': 'reminder sent'})
             except Exception as e:
