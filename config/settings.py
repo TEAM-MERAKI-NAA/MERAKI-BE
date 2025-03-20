@@ -56,6 +56,8 @@ INSTALLED_APPS = [
     'guide',
     'rssparser',
     'currencyrates',
+    'reminder',
+    'userprofile',
 ]
 
 MIDDLEWARE = [
