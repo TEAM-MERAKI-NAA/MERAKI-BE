@@ -15,6 +15,8 @@ class ReminderViewSet(viewsets.ModelViewSet):
     permission_classes = [permissions.IsAuthenticated]
 
     def get_queryset(self):
+        if self.request.user.is_superuser:
+            return Reminder.objects.all()
         return Reminder.objects.filter(user=self.request.user)
 
     def perform_create(self, serializer):
