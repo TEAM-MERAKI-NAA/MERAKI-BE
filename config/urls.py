@@ -32,6 +32,7 @@ urlpatterns = [
     path('guide/', include('guide.urls')),
     path('rssparser/', include('rssparser.urls')),
     path('currencyrates/', include('currencyrates.urls')),
+    path('api/', include('user_queries.urls')),
     re_path(r'^$', TemplateView.as_view(template_name='index.html')),
     re_path(r'^(?!/?static/)(?!/?media/)(?P<path>.*\..*)$', RedirectView.as_view(url='/static/web/immigrationhub/%(path)s', permanent=False)),
     re_path('ckeditor/', include('ckeditor_uploader.urls')),
