@@ -28,10 +28,12 @@ class CustomUserManager(BaseUserManager):
         return self.get(email=email)
 
 class CustomUser(AbstractUser):
-    email = models.EmailField(unique=True)
+    email = models.EmailField(unique=True, null=False, blank=False)
     phone_number = models.CharField(max_length=15, blank=True, null=True)
     is_verified = models.BooleanField(default=False)
     username = models.CharField(max_length=15, unique=True, null=True, blank=True)
+    first_name = models.CharField(max_length=15, null=False, blank=False)
+    last_name = models.CharField(max_length=15, null=False, blank=False)
 
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = []
