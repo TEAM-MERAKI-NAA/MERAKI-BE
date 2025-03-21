@@ -8,11 +8,13 @@ from django.utils import timezone
 from .models import Reminder
 from .serializers import ReminderSerializer
 from datetime import datetime
+from rest_framework_simplejwt.authentication import JWTAuthentication
 
 # Create your views here.
 class ReminderViewSet(viewsets.ModelViewSet):
     serializer_class = ReminderSerializer
     permission_classes = [permissions.IsAuthenticated]
+    authentication_classes = [JWTAuthentication]
 
     def get_queryset(self):
         if self.request.user.is_superuser:

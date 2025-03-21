@@ -75,6 +75,9 @@ CORS_ALLOW_ALL_ORIGINS = True
 
 REST_FRAMEWORK = {
     'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema',
+    'DEFAULT_AUTHENTICATION_CLASSES': [
+        'rest_framework_simplejwt.authentication.JWTAuthentication',
+    ],
 }
 
 ROOT_URLCONF = 'config.urls'
@@ -196,8 +199,8 @@ EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST = 'smtp.gmail.com'  # Example for Gmail
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
-EMAIL_HOST_USER = 'swagatkoirala5@gmail.com'
-EMAIL_HOST_PASSWORD = 'blhh wayu axjb lozr'
+EMAIL_HOST_USER = 'noreply.immigrationhub@gmail.com'
+EMAIL_HOST_PASSWORD = 'mofn jjyb fvhg mxzw'
 
 PASSWORD_RESET_TIMEOUT_DAYS = 1
 
