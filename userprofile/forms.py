@@ -4,7 +4,7 @@ from .models import UserProfile
 class UserProfileForm(forms.ModelForm):
     class Meta:
         model = UserProfile
-        fields = ['bio', 'profile_image', 'gender', 'nationality', 'province', 'first_name', 'last_name']
+        fields = ['bio', 'profile_image', 'gender', 'nationality', 'province']
         widgets = {
             'bio': forms.Textarea(attrs={'rows': 4}),
         } 
