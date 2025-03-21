@@ -7,15 +7,6 @@ from .models import NewsItem
 import datetime
 from .serializers import NewsItemSerializer
 
-from rest_framework.decorators import api_view
-from rest_framework.response import Response
-from .models import NewsItem
-from .serializers import NewsItemSerializer
-import requests
-import feedparser
-from bleach import clean
-import datetime
-
 @api_view(['GET'])
 def fetch_news(request):
     try:
