@@ -9,7 +9,7 @@ class UserProfileAdmin(admin.ModelAdmin):
     readonly_fields = ('created_at', 'updated_at')
     fieldsets = (
         ('User Information', {
-            'fields': ('user')
+            'fields': ('user', 'first_name', 'last_name')
         }),
         ('Profile Details', {
             'fields': ('bio', 'profile_image', 'gender', 'nationality', 'province')
