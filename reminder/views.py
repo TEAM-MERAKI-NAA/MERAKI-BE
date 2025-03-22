@@ -52,3 +52,30 @@ class ReminderViewSet(viewsets.ModelViewSet):
                     status=status.HTTP_500_INTERNAL_SERVER_ERROR
                 )
         return Response({'status': 'reminder not due yet'})
+
+    @action(detail=True, methods=['post'])
+    def send_immediate_reminder(self, request, pk=None):
+        reminder = self.get_object()
+        subject = f'Immediate Reminder: {reminder.title}'
+        message = f'''
+        This is an immediate reminder for: {reminder.title}
+        Document Expiry Date: {reminder.document_expiry_date}
+        Frequency: {reminder.frequency}
+        '''
+        
+        try:
+            send_mail(
+                subject,
+                message,
+                settings.EMAIL_HOST_USER,
+                [reminder.user.email],
+                fail_silently=False,
+            )
+            reminder.last_reminder_sent = timezone.now()
+            reminder.save()
+            return Response({'status': 'immediate reminder sent successfully'})
+        except Exception as e:
+            return Response(
+                {'error': str(e)},
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR
+            )
