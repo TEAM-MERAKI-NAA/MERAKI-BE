@@ -34,6 +34,7 @@ urlpatterns = static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT) + [
     path('currencyrates/', include('currencyrates.urls')),
     path('reminder/', include('reminder.urls')),
     path('profile/', include('userprofile.urls')),
+    path('budget/', include('budgettracker.urls')),
     re_path(r'^$', TemplateView.as_view(template_name='index.html')),
     re_path(r'^(?!/?static/)(?!/?media/)(?P<path>.*\..*)$', RedirectView.as_view(url='/static/web/immigrationhub/%(path)s', permanent=False)),
     re_path('ckeditor/', include('ckeditor_uploader.urls')),
