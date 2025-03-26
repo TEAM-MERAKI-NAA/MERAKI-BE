@@ -10,6 +10,11 @@ class Category(models.Model):
         return self.name
 
 class Community(models.Model):
+    STATUS_CHOICES = [
+        ('pending', 'Pending'),
+        ('approved', 'Approved'),
+        ('rejected', 'Rejected'),
+    ]
     name = models.CharField(max_length=100, unique=True)  # Community name
     description = models.TextField(blank=True, null=True)  # Community description
     category = models.ForeignKey(Category, on_delete=models.CASCADE, related_name='communities')  # Link to category
