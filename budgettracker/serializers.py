@@ -34,10 +34,3 @@ class FinancialSummarySerializer(serializers.ModelSerializer):
         model = FinancialSummary
         fields = ['id', 'user', 'start_date', 'end_date', 'total_income', 'total_expenses', 'remaining_balance', 'created_at', 'updated_at']
         read_only_fields = ['user', 'created_at', 'updated_at']
-
-    def validate(self, data):
-        if data.get('total_income', 0) < 0:
-            raise serializers.ValidationError("Total income cannot be negative")
-        if data.get('total_expenses', 0) < 0:
-            raise serializers.ValidationError("Total expenses cannot be negative")
-        return data 
