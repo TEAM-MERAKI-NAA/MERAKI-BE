@@ -28,10 +28,12 @@ class CustomUserManager(BaseUserManager):
         return self.get(email=email)
 
 class CustomUser(AbstractUser):
-    email = models.EmailField(unique=True)
+    email = models.EmailField(unique=True, null=False, blank=False)
     phone_number = models.CharField(max_length=15, blank=True, null=True)
     is_verified = models.BooleanField(default=False)
-    username = models.CharField(max_length=150, unique=True, null=True, blank=True)
+    username = models.CharField(max_length=15, unique=True, null=True, blank=True)
+    first_name = models.CharField(max_length=15, null=False, blank=False)
+    last_name = models.CharField(max_length=15, null=False, blank=False)
 
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = []
@@ -45,16 +47,3 @@ class CustomUser(AbstractUser):
 
     def __str__(self):
         return self.email
-    
-class Profile(models.Model):
-    user = models.OneToOneField(CustomUser, on_delete=models.CASCADE, related_name='profile')
-    bio = models.TextField(blank=True, null=True)
-    gender = models.CharField(max_length=15, blank=True, null=True)
-    nationality = models.CharField(max_length=15, blank=True, null=True)
-    province = models.CharField(max_length=15, blank=True, null=True)
-    profile_picture = models.ImageField(upload_to='profile_pictures/', blank=True, null=True)
-    first_name = models.CharField(max_length=15, blank=True, null=True)
-    last_name = models.CharField(max_length=15, blank=True, null=True)
-
-    def __str__(self):
-        return f"Profile of {self.user.email}"
