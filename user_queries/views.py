@@ -1,18 +1,29 @@
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.permissions import AllowAny, IsAuthenticated
+from rest_framework.pagination import PageNumberPagination
 from django.shortcuts import get_object_or_404
-from .models import Category, Community, CommunityRequest
+from django.db.models import Q
+from django.core.cache import cache
+from .models import Category, Community, CommunityRequest, Post, Comment
 from .utils import approve_request
-from .serializers import CategorySerializer, CommunitySerializer, CommunityRequestSerializer
+from .serializers import (
+    CategorySerializer, CommunitySerializer, CommunityRequestSerializer,
+    PostSerializer, CommentSerializer
+)
 
+class StandardResultsSetPagination(PageNumberPagination):
+    page_size = 20
+    page_size_query_param = 'page_size'
+    max_page_size = 100
 
 class BaseAPIView(APIView):
-    """
-    A base class for shared functionality or settings, if needed.
-    This simplifies code duplication.
-    """
-    pass
+    pagination_class = StandardResultsSetPagination
+
+    def get_paginated_response(self, data):
+        paginator = self.pagination_class()
+        result_page = paginator.paginate_queryset(data, self.request)
+        return paginator.get_paginated_response(result_page)
 
 
 class CategoryListAPIView(BaseAPIView):
@@ -161,3 +172,114 @@ class DownvoteCommentAPIView(APIView):
         comment.downvotes += 1
         comment.save()
         return Response({"downvotes": comment.downvotes}, status=200)
+
+class PostListAPIView(BaseAPIView):
+    permission_classes = [AllowAny]
+
+    def get(self, request, community_id=None):
+        # Get sorting parameter
+        sort_by = request.query_params.get('sort', 'new')
+        
+        # Base queryset
+        posts = Post.objects.all()
+        
+        if community_id:
+            posts = posts.filter(community_id=community_id)
+        
+        # Apply sorting
+        if sort_by == 'hot':
+            posts = posts.order_by('-upvotes', '-created_at')
+        elif sort_by == 'top':
+            posts = posts.order_by('-upvotes')
+        elif sort_by == 'new':
+            posts = posts.order_by('-created_at')
+        elif sort_by == 'controversial':
+            posts = posts.order_by('-downvotes')
+        
+        # Cache key
+        cache_key = f'posts_{community_id}_{sort_by}_{request.query_params.get("page", 1)}'
+        
+        # Try to get from cache
+        cached_data = cache.get(cache_key)
+        if cached_data:
+            return Response(cached_data)
+        
+        # Serialize and paginate
+        serializer = PostSerializer(posts, many=True)
+        response_data = self.get_paginated_response(serializer.data)
+        
+        # Cache for 5 minutes
+        cache.set(cache_key, response_data, 300)
+        
+        return response_data
+
+class PostDetailAPIView(BaseAPIView):
+    permission_classes = [AllowAny]
+
+    def get(self, request, post_id):
+        post = get_object_or_404(Post.objects.select_related('author', 'community'), id=post_id)
+        serializer = PostSerializer(post)
+        return Response(serializer.data)
+
+class CommentListAPIView(BaseAPIView):
+    permission_classes = [AllowAny]
+
+    def get(self, request, post_id):
+        post = get_object_or_404(Post, id=post_id)
+        comments = Comment.objects.filter(post=post).select_related('author')
+        
+        # Get sorting parameter
+        sort_by = request.query_params.get('sort', 'new')
+        
+        if sort_by == 'top':
+            comments = comments.order_by('-upvotes')
+        elif sort_by == 'new':
+            comments = comments.order_by('-created_at')
+        elif sort_by == 'controversial':
+            comments = comments.order_by('-downvotes')
+        
+        serializer = CommentSerializer(comments, many=True)
+        return self.get_paginated_response(serializer.data)
+
+class SearchAPIView(BaseAPIView):
+    permission_classes = [AllowAny]
+
+    def get(self, request):
+        query = request.query_params.get('q', '')
+        search_type = request.query_params.get('type', 'all')
+        
+        if not query:
+            return Response({"error": "Search query is required"}, status=400)
+        
+        results = {}
+        
+        if search_type in ['all', 'communities']:
+            communities = Community.objects.filter(
+                Q(name__icontains=query) | 
+                Q(description__icontains=query)
+            )
+            results['communities'] = CommunitySerializer(communities, many=True).data
+        
+        if search_type in ['all', 'posts']:
+            posts = Post.objects.filter(
+                Q(title__icontains=query) | 
+                Q(content__icontains=query)
+            ).select_related('author', 'community')
+            results['posts'] = PostSerializer(posts, many=True).data
+        
+        return Response(results)
+
+class ReportContentAPIView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request, content_type, content_id):
+        if content_type not in ['post', 'comment']:
+            return Response({"error": "Invalid content type"}, status=400)
+        
+        reason = request.data.get('reason')
+        if not reason:
+            return Response({"error": "Reason is required"}, status=400)
+        
+        # Here you would typically create a Report model instance
+        # For now, we'll just return success
+        return Response({"message": "Content reported successfully"}, status=200)
