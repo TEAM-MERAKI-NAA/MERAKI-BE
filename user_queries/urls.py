@@ -3,8 +3,19 @@ from .views import (
     CategoryListAPIView, 
     CommunityListAPIView, 
     CommunityRequestAPIView, 
-    CommunityListByCategoryAPIView,ApproveRequestAPIView,
-    JoinCommunityAPIView,CreateCommentAPIView,UpvotePostAPIView, DownvotePostAPIView, UpvoteCommentAPIView,DownvoteCommentAPIView 
+    CommunityListByCategoryAPIView,
+    ApproveRequestAPIView,
+    JoinCommunityAPIView,
+    CreateCommentAPIView,
+    UpvotePostAPIView, 
+    DownvotePostAPIView, 
+    UpvoteCommentAPIView,
+    DownvoteCommentAPIView,
+    PostListAPIView,
+    PostDetailAPIView,
+    CommentListAPIView,
+    SearchAPIView,
+    ReportContentAPIView
 )
 
 urlpatterns = [
@@ -21,13 +32,21 @@ urlpatterns = [
     path('communities/request/', CommunityRequestAPIView.as_view(), name='community-request'),
     path('communities/<int:community_id>/join/', JoinCommunityAPIView.as_view(), name='join-community'),
     path('communities/requests/<int:request_id>/approve/', ApproveRequestAPIView.as_view(), name='approve-request'),
-    path('api/posts/<int:post_id>/comments/', CreateCommentAPIView.as_view(), name='create-comment'),
 
-    # Upvote or downvote a post
+    # Posts
+    path('posts/', PostListAPIView.as_view(), name='post-list'),
+    path('posts/<int:post_id>/', PostDetailAPIView.as_view(), name='post-detail'),
+    path('communities/<int:community_id>/posts/', PostListAPIView.as_view(), name='community-posts'),
     path('posts/<int:post_id>/upvote/', UpvotePostAPIView.as_view(), name='upvote-post'),
     path('posts/<int:post_id>/downvote/', DownvotePostAPIView.as_view(), name='downvote-post'),
+    path('posts/<int:post_id>/comments/', CommentListAPIView.as_view(), name='comment-list'),
+    path('posts/<int:post_id>/comments/create/', CreateCommentAPIView.as_view(), name='create-comment'),
 
-    # Upvote or downvote a comment
+    # Comments
     path('comments/<int:comment_id>/upvote/', UpvoteCommentAPIView.as_view(), name='upvote-comment'),
     path('comments/<int:comment_id>/downvote/', DownvoteCommentAPIView.as_view(), name='downvote-comment'),
+
+    # Search and Reports
+    path('search/', SearchAPIView.as_view(), name='search'),
+    path('report/<str:content_type>/<int:content_id>/', ReportContentAPIView.as_view(), name='report-content'),
 ]

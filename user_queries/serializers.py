@@ -1,4 +1,5 @@
 from rest_framework import serializers
+from django.conf import settings
 from .models import Community, CommunityRequest,Post,Comment, Category
 
 class CommunitySerializer(serializers.ModelSerializer):
@@ -20,6 +21,7 @@ class CommentSerializer(serializers.ModelSerializer):
     class Meta:
         model = Comment
         fields = ['id', 'post', 'author', 'content', 'image', 'created_at', 'upvotes', 'downvotes']
+        
 class CategorySerializer(serializers.ModelSerializer):
     class Meta:
         model = Category
