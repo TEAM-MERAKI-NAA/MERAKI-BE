@@ -1,17 +1,13 @@
 from django.db import models
 from django.conf import settings
 
-
-
 class Category(models.Model):
     name = models.CharField(max_length=100, unique=True, db_index=True)
     description = models.TextField(blank=True, null=True)
     created_at = models.DateTimeField(auto_now_add=True)
 
-
     def __str__(self):
         return self.name
-
 
 
 class Community(models.Model):
@@ -49,7 +45,6 @@ class Post(models.Model):
     upvotes = models.IntegerField(default=0, db_index=True)
     downvotes = models.IntegerField(default=0, db_index=True)
 
-
     def __str__(self):
         return self.title
 
@@ -65,11 +60,13 @@ class Comment(models.Model):
     downvotes = models.IntegerField(default=0, db_index=True)
 
     def save(self, *args, **kwargs):
+        # Limit nested replies to one level.
         if self.parent and self.parent.parent:
             raise ValueError("Nested replies are limited to 1 level.")
         super().save(*args, **kwargs)
 
     def __str__(self):
+        # Return the first 50 characters of the content.
         return self.content[:50]
 
 
