@@ -1,21 +1,57 @@
-from django.shortcuts import render
+# from django.shortcuts import render
 from rest_framework import viewsets, permissions, status, generics
 from rest_framework.decorators import action
 from rest_framework.response import Response
-from rest_framework.views import APIView
+# from rest_framework.views import APIView
 from django.db.models import Sum
 from django.utils import timezone
-from datetime import timedelta, datetime
-from django.core.mail import send_mail
+# from datetime import timedelta, datetime
+# from django.core.mail import send_mail
 from django.conf import settings
-from .models import Income, ExpenseCategory, Expense, BudgetRecommendation, FinancialSummary
-from .serializers import (
-    IncomeSerializer, ExpenseCategorySerializer, ExpenseSerializer,
-    BudgetRecommendationSerializer, FinancialSummarySerializer
-)
+from .models import Budget
+from .serializers import BudgetSerializer
 
 # Create your views here.
 
+class BudgetViewSet(viewsets.ModelViewSet):
+    serializer_class = BudgetSerializer
+    permission_classes = [permissions.IsAuthenticated]
+
+    def get_queryset(self):
+        return Budget.objects.filter(user=self.request.user)
+
+    def perform_create(self, serializer):
+        serializer.save(user=self.request.user)
+
+    @action(detail=False, methods=['get'])
+    def summary(self, request):
+        current_month = timezone.now().replace(day=1)
+        budget = Budget.objects.filter(
+            user=request.user,
+            date__year=current_month.year,
+            date__month=current_month.month
+        ).first()
+
+        if not budget:
+            return Response(
+                {'error': 'No budget found for current month'},
+                status=status.HTTP_404_NOT_FOUND
+            )
+
+        total_expenses = Budget.objects.filter(
+            user=request.user,
+            date__year=current_month.year,
+            date__month=current_month.month
+        ).exclude(category='income').aggregate(total=Sum('amount'))['total'] or 0
+
+        return Response({
+            'monthly_income': budget.monthly_income,
+            'total_expenses': total_expenses,
+            'remaining_amount': budget.remaining_amount
+        })
+
+# Commented out other views
+'''
 class IncomeViewSet(viewsets.ModelViewSet):
     serializer_class = IncomeSerializer
     permission_classes = [permissions.IsAuthenticated]
@@ -119,11 +155,8 @@ class FinancialSummaryViewSet(viewsets.ModelViewSet):
         return Response(serializer.data)
 
 def send_expense_reminder_email(user_email):
-    """
-    Send a daily reminder email to users to log their expenses
-    """
     subject = 'Daily Expense Tracking Reminder'
-    message = '''
+    message = """
     Hello!
     
     This is your daily reminder to log your expenses for today. 
@@ -136,7 +169,7 @@ def send_expense_reminder_email(user_email):
     
     Best regards,
     Your Budget Tracker Team
-    '''
+    """
     
     send_mail(
         subject,
@@ -262,3 +295,81 @@ class BudgetRecommendationsView(APIView):
             'spending_by_category': avg_spending_by_category,
             'recommendations': recommendations
         })
+
+class UserMonthlyBudgetViewSet(viewsets.ModelViewSet):
+    serializer_class = UserMonthlyBudgetSerializer
+    permission_classes = [permissions.IsAuthenticated]
+
+    def get_queryset(self):
+        return UserMonthlyBudget.objects.filter(user=self.request.user)
+
+    def perform_create(self, serializer):
+        serializer.save(user=self.request.user)
+
+class BudgetCategoryViewSet(viewsets.ModelViewSet):
+    serializer_class = BudgetCategorySerializer
+    permission_classes = [permissions.IsAuthenticated]
+
+    def get_queryset(self):
+        return BudgetCategory.objects.filter(user=self.request.user)
+
+    def perform_create(self, serializer):
+        serializer.save(user=self.request.user)
+
+class BudgetExpenseViewSet(viewsets.ModelViewSet):
+    serializer_class = BudgetExpenseSerializer
+    permission_classes = [permissions.IsAuthenticated]
+
+    def get_queryset(self):
+        return BudgetExpense.objects.filter(user=self.request.user)
+
+    def perform_create(self, serializer):
+        serializer.save(user=self.request.user)
+        self.update_monthly_summary()
+
+    def update_monthly_summary(self):
+        current_month = timezone.now().replace(day=1)
+        user_budget = UserMonthlyBudget.objects.get(user=self.request.user)
+        
+        # Get or create summary for current month
+        summary, created = MonthlyBudgetSummary.objects.get_or_create(
+            user=self.request.user,
+            month=current_month,
+            defaults={'remaining_amount': user_budget.monthly_income}
+        )
+
+        # Calculate total expenses for the month
+        total_expenses = BudgetExpense.objects.filter(
+            user=self.request.user,
+            date__year=current_month.year,
+            date__month=current_month.month
+        ).aggregate(total=Sum('amount'))['total'] or 0
+
+        # Update summary
+        summary.total_expenses = total_expenses
+        summary.remaining_amount = user_budget.monthly_income - total_expenses
+        summary.save()
+
+class MonthlyBudgetSummaryViewSet(viewsets.ReadOnlyModelViewSet):
+    serializer_class = MonthlyBudgetSummarySerializer
+    permission_classes = [permissions.IsAuthenticated]
+
+    def get_queryset(self):
+        return MonthlyBudgetSummary.objects.filter(user=self.request.user)
+
+    @action(detail=False, methods=['get'])
+    def current_month(self, request):
+        current_month = timezone.now().replace(day=1)
+        try:
+            summary = MonthlyBudgetSummary.objects.get(
+                user=request.user,
+                month=current_month
+            )
+            serializer = self.get_serializer(summary)
+            return Response(serializer.data)
+        except MonthlyBudgetSummary.DoesNotExist:
+            return Response(
+                {'error': 'No budget summary found for current month'},
+                status=status.HTTP_404_NOT_FOUND
+            )
+'''

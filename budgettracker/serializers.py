@@ -1,6 +1,16 @@
 from rest_framework import serializers
-from .models import Income, ExpenseCategory, Expense, BudgetRecommendation, FinancialSummary
+from .models import Budget
 
+class BudgetSerializer(serializers.ModelSerializer):
+    remaining_amount = serializers.DecimalField(max_digits=10, decimal_places=2, read_only=True)
+
+    class Meta:
+        model = Budget
+        fields = ['id', 'monthly_income', 'category', 'amount', 'description', 'date', 'remaining_amount', 'created_at', 'updated_at']
+        read_only_fields = ['created_at', 'updated_at']
+
+# Commented out other serializers
+'''
 class IncomeSerializer(serializers.ModelSerializer):
     class Meta:
         model = Income
@@ -41,3 +51,30 @@ class FinancialSummarySerializer(serializers.ModelSerializer):
         if data.get('total_expenses', 0) < 0:
             raise serializers.ValidationError("Total expenses cannot be negative")
         return data 
+
+class UserMonthlyBudgetSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = UserMonthlyBudget
+        fields = ['id', 'monthly_income', 'created_at', 'updated_at']
+        read_only_fields = ['created_at', 'updated_at']
+
+class BudgetCategorySerializer(serializers.ModelSerializer):
+    class Meta:
+        model = BudgetCategory
+        fields = ['id', 'name', 'is_fixed', 'created_at']
+        read_only_fields = ['created_at']
+
+class BudgetExpenseSerializer(serializers.ModelSerializer):
+    category_name = serializers.CharField(source='category.name', read_only=True)
+
+    class Meta:
+        model = BudgetExpense
+        fields = ['id', 'category', 'category_name', 'amount', 'description', 'date', 'created_at']
+        read_only_fields = ['created_at']
+
+class MonthlyBudgetSummarySerializer(serializers.ModelSerializer):
+    class Meta:
+        model = MonthlyBudgetSummary
+        fields = ['id', 'month', 'total_expenses', 'remaining_amount', 'created_at', 'updated_at']
+        read_only_fields = ['created_at', 'updated_at']
+''' 
