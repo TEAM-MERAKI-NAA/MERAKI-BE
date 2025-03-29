@@ -1,12 +1,36 @@
 [
     {
+        "model": "user_queries.category",
+        "pk": 1,
+        "fields": {
+            "name": "Province",
+            "type": "Province"
+        }
+    },
+    {
+        "model": "user_queries.category",
+        "pk": 2,
+        "fields": {
+            "name": "Nationality",
+            "type": "Nationality"
+        }
+    },
+    {
+        "model": "user_queries.category",
+        "pk": 3,
+        "fields": {
+            "name": "Functional",
+            "type": "Functional"
+        }
+    },
+    {
         "model": "community.community",
         "pk": 1,
         "fields": {
             "name": "Indian Community",
             "description": "A community for Indian nationals.",
-            "category": 2,  // Replace '2' with the actual ID of the 'Nationality' category in your database
-            "creator": 1,  // Replace '1' with the ID of the user creating these communities
+            "category": 2,  
+            "creator": 1,  
             "is_predefined": true,
             "image": null
         }
