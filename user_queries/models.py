@@ -98,7 +98,7 @@ class Category(models.Model):
         ('Other', 'Other'), 
     ]
     name = models.CharField(max_length=100, unique=True)
-    type = models.CharField(max_length=50, choices=TYPE_CHOICES)
+    type = models.CharField(max_length=50, null=True, blank=True, choices=TYPE_CHOICES)
 
     def __str__(self):
         return self.name
