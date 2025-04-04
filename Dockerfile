@@ -8,6 +8,11 @@ ENV DJANGO_SETTINGS_MODULE=meraki.settings
 ENV ALLOWED_HOSTS=*
 ENV DEBUG=True
 
+# Set superuser environment variables (replace with actual values)
+ENV DJANGO_SUPERUSER_EMAIL=skoirala16@myseneca.ca
+ENV DJANGO_SUPERUSER_PASSWORD=Admin@12345678
+ENV DJANGO_SUPERUSER_PASSWORD_CONFIRM=Admin@12345678
+
 # Set work directory
 WORKDIR /app
 
@@ -18,10 +23,10 @@ RUN apt-get update && apt-get install -y \
     && rm -rf /var/lib/apt/lists/*
 
 # Install Python dependencies
-COPY requirements.txt .
+COPY requirements.txt . 
 RUN pip install --no-cache-dir -r requirements.txt
 
-# Copy project
+# Copy project files
 COPY . .
 
 # Expose port
@@ -31,5 +36,8 @@ EXPOSE 8000
 HEALTHCHECK --interval=30s --timeout=30s --start-period=5s --retries=3 \
     CMD curl -f http://localhost:8000/health/ || exit 1
 
-# Run migrations and start server with explicit host and port
-CMD ["sh", "-c", "python manage.py migrate && python manage.py runserver 0.0.0.0:8000 --noreload"]
+# Create a superuser if necessary, then run migrations and start the server
+CMD ["sh", "-c", "\
+    python manage.py migrate && \
+    python create_superuser.py && \
+    python manage.py runserver 0.0.0.0:8000 --noreload"]
