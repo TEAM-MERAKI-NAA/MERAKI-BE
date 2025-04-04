@@ -5,7 +5,7 @@ from .models import Budget
 class BudgetAdmin(admin.ModelAdmin):
     list_display = ('user', 'monthly_income', 'category', 'amount', 'description', 'date', 'remaining_amount')
     list_filter = ('category', 'date', 'user')
-    search_fields = ('description', 'user__username')
+    search_fields = ('description', 'user__email')
     readonly_fields = ('created_at', 'updated_at', 'remaining_amount')
     ordering = ('-date', '-created_at')
 
