@@ -7,5 +7,5 @@ router.register(r'posts', views.PostViewSet, basename='post')
 router.register(r'posts/(?P<post_pk>\d+)/comments', views.CommentViewSet, basename='comment')
 
 urlpatterns = [
-    path('', include(router.urls)),
+    path('api/', include(router.urls)),
 ] 
