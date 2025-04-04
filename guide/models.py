@@ -11,7 +11,7 @@ class Guide(models.Model):
     title = models.CharField(max_length=200)
     status = models.CharField(max_length=50, choices=STATUS, default='inactive')
     image = models.ImageField(upload_to = 'guides/', blank=True, null = True)
-    short_description = models.TextField()
+    description = CKEditor5Field(config_name='extends', blank=False)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     order = models.IntegerField(blank=True, null=True)
