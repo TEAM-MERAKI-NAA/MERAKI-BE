@@ -4,79 +4,441 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="icon" href="../static/favicon.ico" />
-    <title>Immigration Hub - Coming Soon</title>
+    <title>Immigration Hub - Your Complete Immigration Companion</title>
     <style>
+        :root {
+            /* IRCC Color Palette */
+            --primary-dark: #26374A;
+            --primary: #2B4380;
+            --primary-light: #335075;
+            --primary-lighter: #4B6A9B;
+            --accent: #D52B1E;
+            --accent-light: #E84C3D;
+            --text-dark: #333333;
+            --text-light: #666666;
+            --bg-light: #F5F5F5;
+            --bg-lighter: #FFFFFF;
+            --border-color: rgba(43, 67, 128, 0.1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
         body {
             font-family: 'Arial', sans-serif;
-            background-color: #f4f4f4;
-            color: #333;
+            line-height: 1.4;
+            color: var(--text-dark);
+            min-height: 100vh;
+            background: 
+                linear-gradient(135deg, 
+                    rgba(38, 55, 74, 0.05) 0%,
+                    rgba(43, 67, 128, 0.1) 50%,
+                    rgba(255, 255, 255, 0.9) 100%
+                ),
+                radial-gradient(circle at top right, 
+                    rgba(38, 55, 74, 0.1) 0%,
+                    transparent 50%
+                ),
+                radial-gradient(circle at bottom left, 
+                    rgba(43, 67, 128, 0.1) 0%,
+                    transparent 50%
+                );
+            background-attachment: fixed;
+            overflow-x: hidden;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 1rem;
+            min-height: 100vh;
             display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            margin: 0;
             flex-direction: column;
+            justify-content: center;
         }
-        .logo {
-            width: 150px;
-            height: auto;
-            margin-bottom: 20px;
+
+        .main-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+            align-items: center;
+            position: relative;
         }
-        h1 {
-            font-size: 2.5rem;
-            margin: 0;
-            color: #d32f2f;
+
+        .hero {
+            text-align: left;
+            padding: 2.5rem;
+            background: linear-gradient(135deg, var(--primary-dark), var(--primary));
+            border-radius: 20px;
+            color: white;
+            box-shadow: 
+                0 10px 20px rgba(38, 55, 74, 0.2),
+                0 6px 6px rgba(38, 55, 74, 0.1);
+            position: relative;
+            overflow: hidden;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            backdrop-filter: blur(10px);
         }
-        p {
-            font-size: 1.2rem;
-            margin: 10px 0 20px;
-        }
-        .countdown {
-            font-size: 1.5rem;
-            font-weight: bold;
-        }
-        .footer {
+
+        .hero::before {
+            content: '';
             position: absolute;
-            bottom: 10px;
-            font-size: 0.9rem;
-            color: #000000;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: 
+                linear-gradient(45deg, 
+                    rgba(43, 67, 128, 0.1) 0%,
+                    rgba(51, 80, 117, 0.1) 100%
+                ),
+                url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.05'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+            z-index: 1;
+        }
+
+        .hero-content {
+            position: relative;
+            z-index: 2;
+        }
+
+        .logo {
+            width: 120px;
+            height: auto;
+            margin-bottom: 2rem;
+            filter: brightness(0) invert(1);
+            transition: transform 0.3s ease;
+        }
+
+        .logo:hover {
+            transform: scale(1.05);
+        }
+
+        h1 {
+            font-size: 2.8rem;
+            color: white;
+            margin-bottom: 0.8rem;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            font-weight: 700;
+            line-height: 1.2;
+        }
+
+        .subtitle {
+            font-size: 1.3rem;
+            color: rgba(255,255,255,0.9);
+            margin-bottom: 1.2rem;
+            font-weight: 300;
+        }
+
+        .tagline {
+            font-size: 1.1rem;
+            color: rgba(255,255,255,0.8);
+            line-height: 1.6;
+            font-style: italic;
+            margin-bottom: 2rem;
+            position: relative;
+            padding-left: 1.5rem;
+        }
+
+        .tagline::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            width: 3px;
+            background: var(--accent);
+            border-radius: 3px;
+        }
+
+        .features {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1.2rem;
+            height: 100%;
+        }
+
+        .feature-card {
+            background: rgba(255, 255, 255, 0.95);
+            padding: 1.5rem;
+            border-radius: 16px;
+            box-shadow: 
+                0 4px 6px rgba(38, 55, 74, 0.1),
+                0 1px 3px rgba(38, 55, 74, 0.08);
             text-align: center;
+            transition: all 0.3s ease;
+            border: 1px solid var(--border-color);
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            backdrop-filter: blur(10px);
+        }
+
+        .feature-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, var(--primary), var(--primary-light));
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 
+                0 8px 16px rgba(38, 55, 74, 0.15),
+                0 4px 8px rgba(38, 55, 74, 0.1);
+            border-color: var(--primary-light);
+        }
+
+        .feature-card:hover::before {
+            opacity: 1;
+        }
+
+        .feature-icon {
+            font-size: 2.2rem;
+            margin-bottom: 1rem;
+            color: var(--primary);
+            transition: all 0.3s ease;
+            display: inline-block;
+        }
+
+        .feature-card:hover .feature-icon {
+            transform: scale(1.1) translateY(-3px);
+        }
+
+        .feature-title {
+            font-size: 1.2rem;
+            color: var(--primary-dark);
+            margin-bottom: 0.8rem;
+            font-weight: 600;
+        }
+
+        .feature-card p {
+            font-size: 0.95rem;
+            color: var(--text-light);
+            line-height: 1.5;
+        }
+
+        .cta-section {
+            margin-top: 2rem;
+        }
+
+        .cta-button {
+            display: inline-block;
+            background: linear-gradient(135deg, var(--accent), var(--accent-light));
+            color: white;
+            padding: 1rem 2.5rem;
+            border-radius: 50px;
+            text-decoration: none;
+            font-size: 1.1rem;
+            font-weight: bold;
+            transition: all 0.3s ease;
+            box-shadow: 
+                0 4px 6px rgba(213, 43, 30, 0.2),
+                0 1px 3px rgba(213, 43, 30, 0.1);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .cta-button::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(45deg, 
+                rgba(255,255,255,0.1) 0%,
+                rgba(255,255,255,0) 100%);
+            transform: translateX(-100%);
+            transition: transform 0.3s ease;
+        }
+
+        .cta-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 
+                0 6px 12px rgba(213, 43, 30, 0.3),
+                0 3px 6px rgba(213, 43, 30, 0.2);
+        }
+
+        .cta-button:hover::before {
+            transform: translateX(100%);
+        }
+
+        .footer {
+            text-align: center;
+            padding: 1.5rem 0;
+            font-size: 0.85rem;
+            color: var(--text-light);
+            margin-top: 2rem;
+            position: relative;
+        }
+
+        .footer::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 200px;
+            height: 1px;
+            background: linear-gradient(90deg, 
+                transparent 0%,
+                var(--border-color) 50%,
+                transparent 100%);
+        }
+
+        .footer p {
+            margin: 0.3rem 0;
+        }
+
+        .team-credits {
+            font-weight: 500;
+            color: var(--primary-dark);
+        }
+
+        @media (max-width: 1200px) {
+            .container {
+                padding: 1.5rem;
+            }
+
+            h1 {
+                font-size: 2.4rem;
+            }
+        }
+
+        @media (max-width: 1024px) {
+            .main-content {
+                grid-template-columns: 1fr;
+                gap: 2rem;
+            }
+
+            .hero {
+                padding: 2rem;
+            }
+
+            .features {
+                grid-template-columns: repeat(3, 1fr);
+            }
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 1rem;
+            }
+
+            .features {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            h1 {
+                font-size: 2rem;
+            }
+
+            .subtitle {
+                font-size: 1.1rem;
+            }
+
+            .hero {
+                padding: 1.5rem;
+            }
+
+            .feature-card {
+                padding: 1.2rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .features {
+                grid-template-columns: 1fr;
+            }
+
+            h1 {
+                font-size: 1.8rem;
+            }
+
+            .subtitle {
+                font-size: 1rem;
+            }
+
+            .tagline {
+                font-size: 0.95rem;
+            }
+
+            .cta-button {
+                padding: 0.8rem 2rem;
+                font-size: 1rem;
+            }
         }
     </style>
 </head>
 <body>
-    <img src="../static/logo.png" alt="Immigration Hub Logo" class="logo">
-    <h1>Coming Soon</h1>
-    <p>We are working hard to bring you the best immigration resources and accessibility web application for International students.</p>
-    <div class="countdown" id="countdown"></div>
-    <div class="footer">© 2025 Immigration Hub. All rights reserved.<br/>Developed by <b>Team MERAKI.</b></div>
+    <div class="container">
+        <div class="main-content">
+            <div class="hero">
+                <div class="hero-content">
+                    <img src="../static/logo.png" alt="Immigration Hub Logo" class="logo">
+                    <h1>Immigration Hub</h1>
+                    <p class="subtitle">Your Comprehensive Immigration Platform</p>
+                    <p class="tagline">Empowering immigrants with essential tools and resources</p>
+                    <div class="cta-section">
+                        <a href="http://4.206.179.192:3000/" class="cta-button">Get Started</a>
+                    </div>
+                </div>
+            </div>
 
-    <script>
-        // Countdown Timer
-        const countdown = () => {
-            const countDate = new Date('March 31, 2025 00:00:00').getTime();
-            const now = new Date().getTime();
-            const gap = countDate - now;
+            <div class="features">
+                <div class="feature-card">
+                    <div class="feature-icon">📚</div>
+                    <h3 class="feature-title">Immigration Guides</h3>
+                    <p>Expert guidance for your journey</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">💱</div>
+                    <h3 class="feature-title">Currency Rates</h3>
+                    <p>Real-time exchange rates</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">⏰</div>
+                    <h3 class="feature-title">Smart Reminders</h3>
+                    <p>Stay on top of deadlines</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">💰</div>
+                    <h3 class="feature-title">Budget Tracker</h3>
+                    <p>Manage your finances</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">👥</div>
+                    <h3 class="feature-title">Community</h3>
+                    <p>Connect with immigrants</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">📰</div>
+                    <h3 class="feature-title">Latest News</h3>
+                    <p>Stay informed</p>
+                </div>
+            </div>
+        </div>
 
-            const second = 1000;
-            const minute = second * 60;
-            const hour = minute * 60;
-            const day = hour * 24;
-
-            const textDay = Math.floor(gap / day);
-            const textHour = Math.floor((gap % day) / hour);
-            const textMinute = Math.floor((gap % hour) / minute);
-            const textSecond = Math.floor((gap % minute) / second);
-
-            document.getElementById('countdown').innerText = `${textDay}d ${textHour}h ${textMinute}m ${textSecond}s`;
-
-            if (gap < 0) {
-                clearInterval(countdown);
-                document.getElementById('countdown').innerText = "We're Live!";
-            }
-        };
-
-        setInterval(countdown, 1000);
-    </script>
+        <footer class="footer">
+            <p>© 2024 Immigration Hub. All Rights Reserved.</p>
+            <p class="team-credits">Developed with Excellence by Team MERAKI</p>
+            <p>Version 1.0.0 | Development Completed</p>
+        </footer>
+    </div>
 </body>
 </html>

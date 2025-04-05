@@ -28,7 +28,7 @@ admin.site.site_title = 'ImmigrationHub'
 urlpatterns = static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT) + [
     path('admin/', admin.site.urls),
     path('auth/', include('authentication.urls')),
-    path('news/', include('news.urls')),
+    # path('news/', include('news.urls')),
     path('guide/', include('guide.urls')),
     path('rssparser/', include('rssparser.urls')),
     path('currencyrates/', include('currencyrates.urls')),

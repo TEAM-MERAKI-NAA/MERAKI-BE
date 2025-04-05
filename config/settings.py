@@ -107,30 +107,18 @@ WSGI_APPLICATION = 'config.wsgi.application'
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
 
 DATABASES = {
-    #      'default': {
-    #      'ENGINE': 'django.db.backends.postgresql',
-    #      'NAME': 'immigrationhub',
-    #      'USER': 'ubuntu',
-    #      'PASSWORD': 'Seneca@clo900',
-    #      'HOST': '127.0.0.1',
-    #      'PORT': '5432',
-    #  }
-#    'default': {
+    'default': {
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': 'immigrationhub',
+        'USER': 'ubuntu',
+        'PASSWORD': 'Seneca@clo900',
+        'HOST': '127.0.0.1',
+        'PORT': '5432',
+     }
+#     'default': {
 #        'ENGINE': 'django.db.backends.sqlite3',
 #        'NAME': BASE_DIR / 'db.sqlite3',
 #    }
-
-    'default': {
-       'ENGINE': 'django.db.backends.postgresql',
-       'NAME': 'immigrationhub',
-       'USER': 'immigrationhub',
-       'PASSWORD': 'PzjWnjbV7PiWl4e1ktV7ZNWR5VZveQc9',
-       'HOST': 'dpg-cv64882n91rc73bb9pkg-a.oregon-postgres.render.com',  # Corrected hostname
-       'PORT': '5432',
-       'OPTIONS': {
-           'sslmode': 'require',  # Ensures SSL connection is used
-       },
-    }
 }
 
 
@@ -248,48 +236,145 @@ CKEDITOR_5_CONFIGS = {
             'paragraph', 'heading1', 'heading2', 'heading3',
             '|',
             'bulletedList', 'numberedList',
-            '|',
-            'blockQuote', 'imageUpload'
         ],
-        'toolbar': ['heading', '|', 'outdent', 'indent', '|', 'bold', 'italic', 'link', 'underline', 'strikethrough',
-                    'code', 'subscript', 'superscript', 'highlight', '|', 'codeBlock',
-                    'bulletedList', 'numberedList', 'todoList', '|',  'blockQuote', 'imageUpload', '|',
-                    'fontSize', 'fontFamily', 'fontColor', 'fontBackgroundColor', 'mediaEmbed', 'removeFormat',
-                    'insertTable', ],
-        'image': {
-            'toolbar': ['imageTextAlternative', 'imageTitle', '|', 'imageStyle:alignLeft', 'imageStyle:full',
-                        'imageStyle:alignRight', 'imageStyle:alignCenter', 'imageStyle:side',  '|'],
-            'styles': [
-                'full',
-                'side',
-                'alignLeft',
-                'alignRight',
-                'alignCenter',
-            ]
+    },
+}
+
+# Swagger Documentation Settings
+SPECTACULAR_SETTINGS = {
+    'TITLE': '🌟 ImmigrationHub API Documentation',
+    'DESCRIPTION': '''
+<div style="max-width: 1200px; margin: 0 auto;">
+    <h1 style="text-align: center; color: #2c3e50; margin: 10px 0;">Welcome to ImmigrationHub API</h1>
+    <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin: 20px 0;">
+        <div style="background: white; border-radius: 8px; padding: 16px; box-shadow: 0 1px 3px rgba(0,0,0,0.1);">
+            <h3 style="color: #2c3e50; margin: 0 0 12px 0; padding-bottom: 8px; border-bottom: 2px solid #3498db;">🚀 Key Features</h3>
+            <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; font-size: 13px;">
+                <div>🔐 <strong>Auth</strong></div>
+                <div>👤 <strong>Profile</strong></div>
+                <div>📰 <strong>RSS</strong></div>
+                <div>📚 <strong>Guides</strong></div>
+                <div>💱 <strong>Currency</strong></div>
+                <div>⏰ <strong>Reminder</strong></div>
+                <div>💰 <strong>Budget</strong></div>
+                <div>👥 <strong>Community</strong></div>
+            </div>
+        </div>
+        <div style="background: white; border-radius: 8px; padding: 16px; box-shadow: 0 1px 3px rgba(0,0,0,0.1);">
+            <h3 style="color: #2c3e50; margin: 0 0 12px 0; padding-bottom: 8px; border-bottom: 2px solid #e74c3c;">🔑 Authentication</h3>
+            <div style="font-size: 13px;">
+                <p style="margin: 0 0 8px 0;">JWT authentication required:</p>
+                <code style="display: block; background: #f8f9fa; padding: 8px; border-radius: 4px; font-size: 12px;">Authorization: Bearer &lt;token&gt;</code>
+            </div>
+        </div>
+        <div style="background: white; border-radius: 8px; padding: 16px; box-shadow: 0 1px 3px rgba(0,0,0,0.1);">
+            <div style="font-size: 13px;">
+                <div style="margin-top: 12px; text-align: center; font-size: 12px; color: #7f8c8d;">
+                    <hr style="border: none; border-top: 1px solid #eee; margin: 8px 0;">
+                    © 2025 ImmigrationHub. All rights reserved.
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+''',
+    'VERSION': '1.0.0',
+    'SERVE_INCLUDE_SCHEMA': False,
+    'SWAGGER_UI_SETTINGS': {
+        'deepLinking': True,
+        'persistAuthorization': True,
+        'displayOperationId': True,
+        'defaultModelsExpandDepth': 3,
+        'defaultModelExpandDepth': 3,
+        'defaultModelRendering': 'example',
+        'displayRequestDuration': True,
+        'docExpansion': 'none',
+        'filter': True,
+        'syntaxHighlight.theme': 'monokai',
+        'tryItOutEnabled': True,
+        'requestSnippetsEnabled': True,
+        'layout': 'BaseLayout',
+        'showExtensions': True,
+        'showCommonExtensions': True,
+        'tagsSorter': 'alpha',
+        'operationsSorter': 'method',
+        'syntaxHighlight': {
+            'activated': True,
+            'theme': 'monokai'
         },
-        'table': {
-            'contentToolbar': ['tableColumn', 'tableRow', 'mergeTableCells',
-                               'tableProperties', 'tableCellProperties'],
-            'tableProperties': {
-                'borderColors': customColorPalette,
-                'backgroundColors': customColorPalette
-            },
-            'tableCellProperties': {
-                'borderColors': customColorPalette,
-                'backgroundColors': customColorPalette
+        'displayRequestDuration': True,
+        'filter': True,
+        'requestSnippetsEnabled': True,
+    },
+    'SWAGGER_UI_DIST': '//unpkg.com/swagger-ui-dist@latest',
+    'SWAGGER_UI_FAVICON_HREF': 'static/web/immigrationhub/favicon.ico',
+    'REDOC_UI_DIST': '//cdn.jsdelivr.net/npm/redoc@latest/bundles/redoc.standalone.js',
+    'COMPONENT_SPLIT_REQUEST': True,
+    'SORT_OPERATIONS': False,
+    'ENABLE_DJANGO_DEPLOY_CHECK': False,
+    'DISABLE_ERRORS_AND_WARNINGS': True,
+    'TAGS': [
+        {
+            'name': 'auth',
+            'description': '🔐 **Authentication & Authorization**\n\nSecure endpoints for user authentication, registration, and token management.',
+        },
+        {
+            'name': 'profile',
+            'description': '👤 **User Profile Management**\n\nEndpoints for managing user profiles and preferences.',
+        },
+        {
+            'name': 'rssparser',
+            'description': '📰 **RSS Feed Integration**\n\nEndpoints for news and articles integration.',
+        },
+        {
+            'name': 'guide',
+            'description': '📚 **Immigration Guides**\n\nAccess to comprehensive immigration resources.',
+        },
+        {
+            'name': 'currencyrates',
+            'description': '💱 **Currency Rates**\n\nReal-time currency conversion endpoints.',
+        },
+        {
+            'name': 'reminder',
+            'description': '⏰ **Reminder System**\n\nEndpoints for managing notifications and reminders.',
+        },
+        {
+            'name': 'budget',
+            'description': '💰 **Budget Management**\n\nEndpoints for tracking expenses and financial planning.',
+        },
+        {
+            'name': 'community',
+            'description': '👥 **Community**\n\nEndpoints for user interaction and community features.',
+        }
+    ],
+    'SECURITY': [
+        {
+            'Bearer': {
+                'type': 'apiKey',
+                'name': 'Authorization',
+                'in': 'header',
+                'description': '''
+# 🔒 JWT Authentication
+
+Include your JWT token in the Authorization header:
+
+```
+Authorization: Bearer <your_token>
+```
+
+Example token format:
+```
+Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9...
+```
+                '''
             }
-        },
-        'heading': {
-            'options': [
-                {'model': 'paragraph', 'title': 'Paragraph',
-                    'class': 'ck-heading_paragraph'},
-                {'model': 'heading1', 'view': 'h1', 'title': 'Heading 1',
-                    'class': 'ck-heading_heading1'},
-                {'model': 'heading2', 'view': 'h2', 'title': 'Heading 2',
-                    'class': 'ck-heading_heading2'},
-                {'model': 'heading3', 'view': 'h3',
-                    'title': 'Heading 3', 'class': 'ck-heading_heading3'}
-            ]
+        }
+    ],
+    'EXTENSIONS_INFO': {
+        'x-logo': {
+            'url': '/static/web/immigrationhub/logo.png',
+            'backgroundColor': '#FFFFFF',
+            'altText': 'ImmigrationHub Logo'
         }
     }
 }
