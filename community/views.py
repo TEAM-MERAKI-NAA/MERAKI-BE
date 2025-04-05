@@ -4,6 +4,7 @@ from rest_framework.response import Response
 from .models import Post, Comment
 from .serializers import PostSerializer, CommentSerializer
 from rest_framework.permissions import IsAuthenticated
+from drf_spectacular.utils import extend_schema, OpenApiParameter, OpenApiResponse, OpenApiExample
 
 class PostViewSet(viewsets.ModelViewSet):
     queryset = Post.objects.all().order_by('-created_at')
@@ -13,6 +14,24 @@ class PostViewSet(viewsets.ModelViewSet):
     def perform_create(self, serializer):
         serializer.save(user=self.request.user)
     
+    @extend_schema(
+        methods=['POST'],
+        request=CommentSerializer,
+        responses={201: CommentSerializer},
+        description='Create a new comment on a post',
+        examples=[
+            OpenApiExample(
+                'Comment Example',
+                value={'content': 'This is a comment'},
+                request_only=True,
+            ),
+        ]
+    )
+    @extend_schema(
+        methods=['GET'],
+        responses={200: CommentSerializer(many=True)},
+        description='Get all comments for a post'
+    )
     @action(detail=True, methods=['get', 'post'])
     def comments(self, request, pk=None):
         post = self.get_object()
