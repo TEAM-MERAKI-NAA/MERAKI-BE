@@ -1,0 +1,92 @@
+# Django
+*.log
+*.pot
+*.pyc
+__pycache__/
+local_settings.py
+db.sqlite3
+media/
+staticfiles/
+
+Migrations/
+migrations/
+
+# Migrations (optional: ignore auto-generated migrations during development)
+# !test/migrations/__init__.py  # Uncomment if you want to keep the __init__.py file
+migrations/*.py  # Ignore all migration files in the test app
+migrations/__init__.py  # Keep the __init__.py file
+
+# Django Rest Framework (DRF) - Optional
+docs/_build/
+
+# IDE and Editor files
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Virtual environment
+venv/
+env/
+ENV/
+.env/
+.venv/
+dev/
+
+# Python
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# Database
+*.db
+*.sqlite3
+
+# Logs and backups
+*.log
+*.bak
+*.backup
+
+# OS generated files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# Testing
+.coverage
+htmlcov/
+.pytest_cache/
+.nox/
+
+# Environments
+.env
+.venv
+env/
+venv/
+ENV/
+env.bak/
+venv.bak/
+
+# API Documentation (if using DRF's built-in tools)
+docs/
+apidoc/
